@@ -32,6 +32,7 @@ class List extends React.Component {
         this.editText = this._onEditText.bind(this);
         this.pressEnter = this._onPressEnter.bind(this);
         this.blur = this._onBlureEditTask.bind(this);
+        this.deleteTask = this._onDeleteTask.bind(this);
     };
 
     _onTypeText(e) {
@@ -110,6 +111,13 @@ class List extends React.Component {
         this._onSaveEditTask();
     }
 
+    _onDeleteTask({e, itemId}) {
+        e.preventDefault();
+        const tasksList = [...this.state.tasksList];
+        const tasklistWithoutTask = tasksList.filter(item => item.taskId !== itemId);
+        this.setState({tasksList: tasklistWithoutTask});
+    }
+
 
     render() {
         const tasksList = filterArray(this.state.tasksList, this.state.taskView);
@@ -131,6 +139,7 @@ class List extends React.Component {
                     {item.taskStatus === status.inProcess
                         ? <Button value={'Complete Task'} action={this.changeTaskStatus} itemId={item.taskId}/>
                         : <Button value={'Undo'} action={this.changeTaskStatus} itemId={item.taskId}/>}
+                    <Button value={'Delete'} action={this.deleteTask} itemId={item.taskId}/>
                 </div>
             );
         });
