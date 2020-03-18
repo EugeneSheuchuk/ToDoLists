@@ -22,11 +22,16 @@ class List extends React.Component {
             field: '',
             tasksList: [],
             taskView: taskView.all,
+            editField: '',
+            editItemId: null,
         };
         this.addTask = this._addTask.bind(this);
         this.changeTaskStatus = this._onChangeTaskStatus.bind(this);
         this.filterTask = this._onFilterTasks.bind(this);
         this.typeText = this._onTypeText.bind(this);
+        this.editText = this._onEditText.bind(this);
+        this.pressEnter = this._onPressEnter.bind(this);
+        this.blur = this._onBlureEditTask.bind(this);
     };
 
     _onTypeText(e) {
@@ -40,6 +45,7 @@ class List extends React.Component {
             taskId: this.state.taskId,
             taskText: this.state.field,
             taskStatus: status.inProcess,
+            isEdit: false,
         };
         const taskId = this.state.taskId + 1;
         const tasksList = [...this.state.tasksList];
@@ -65,6 +71,45 @@ class List extends React.Component {
         this.setState({taskView: itemId});
     };
 
+    _onEditTask({e, taskId}) {
+        e.preventDefault();
+        const tasksList = [...this.state.tasksList];
+        let editField = '';
+        tasksList.forEach(item => {
+            if (item.taskId === taskId) {
+                item.isEdit = !item.isEdit;
+                editField = item.taskText;
+            }
+        });
+        this.setState({tasksList, editField, editItemId: taskId});
+    }
+
+    _onEditText(e) {
+        const newText = e.target.value;
+        this.setState({editField: newText});
+    };
+
+    _onSaveEditTask() {
+        const tasksList = [...this.state.tasksList];
+        tasksList.forEach(item => {
+            if (item.taskId === this.state.editItemId) {
+                item.isEdit = !item.isEdit;
+                item.taskText = this.state.editField;
+            }
+        });
+        this.setState({tasksList, editField: '', editItemId: null});
+    };
+
+    _onPressEnter(e) {
+        if (e.key === 'Enter') {
+            this._onSaveEditTask();
+        }
+    }
+
+    _onBlureEditTask() {
+        this._onSaveEditTask();
+    }
+
 
     render() {
         const tasksList = filterArray(this.state.tasksList, this.state.taskView);
@@ -72,7 +117,16 @@ class List extends React.Component {
             return (
                 <div className={style.taskContainer} key={`${item.taskText}-${index}`}>
                     <div className={`${style.taskNumber} ${style.taskItem}`}>{index + 1}.</div>
-                    <div className={`${style.taskText} ${style.taskItem}`}>{item.taskText}</div>
+                    <div className={`${style.taskText} ${style.taskItem}`}
+                         onDoubleClick={(e) => this._onEditTask({e, taskId: item.taskId})}>
+                        {item.isEdit
+                            ? <InputText imputValue={this.state.editField}
+                                         focus={true}
+                                         action={this.editText}
+                                         keyAction={this.pressEnter}
+                                         blur={this.blur}/>
+                            : item.taskText}
+                    </div>
                     <div className={`${style.taskStatus} ${style.taskItem}`}>{item.taskStatus}</div>
                     {item.taskStatus === status.inProcess
                         ? <Button value={'Complete Task'} action={this.changeTaskStatus} itemId={item.taskId}/>
