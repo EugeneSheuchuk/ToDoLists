@@ -1,10 +1,16 @@
 import React from 'react';
 import style from './List.module.css';
 import Button from "../Button/Button";
+import {filterArray} from "../../assets/functions";
 
-const status = {
+export const status = {
     complete: 'COMPLETE',
     inProcess: 'INPROCESS',
+};
+export const taskView = {
+    all: 'ALL',
+    complete: 'COMPLETE',
+    inProgress: 'INPROGRESS',
 };
 
 class List extends React.Component {
@@ -14,9 +20,11 @@ class List extends React.Component {
             taskId: 0,
             field: '',
             tasksList: [],
+            taskView: taskView.all,
         };
         this.addTask = this._addTask.bind(this);
         this.changeTaskStatus = this._onChangeTaskStatus.bind(this);
+        this.filterTask = this._onFilterTasks.bind(this);
     };
 
     _onTypeText(e) {
@@ -50,9 +58,15 @@ class List extends React.Component {
         this.setState({tasksList});
     }
 
+    _onFilterTasks({e, itemId}) {
+        e.preventDefault();
+        this.setState({taskView: itemId});
+    };
+
 
     render() {
-        const tasks = this.state.tasksList.map((item, index) => {
+        const tasksList = filterArray(this.state.tasksList, this.state.taskView);
+        const tasks = tasksList.map((item, index) => {
             return (
                 <div className={style.taskContainer} key={`${item.taskText}-${index}`}>
                     <div className={`${style.taskNumber} ${style.taskItem}`}>{index + 1}.</div>
@@ -76,6 +90,11 @@ class List extends React.Component {
                 </label>
                 <div className={style.tasksContainer}>
                     {tasks}
+                    <div className={`${style.tasksFilter}`}>
+                        <Button value={'All'} action={this.filterTask} itemId={taskView.all}/>
+                        <Button value={'Complete'} action={this.filterTask} itemId={taskView.complete}/>
+                        <Button value={'In process'} action={this.filterTask} itemId={taskView.inProgress}/>
+                    </div>
                 </div>
             </div>
         );
