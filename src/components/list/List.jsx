@@ -4,13 +4,13 @@ import Button from "../Button/Button";
 import {filterArray} from "../../assets/functions";
 
 export const status = {
-    complete: 'COMPLETE',
-    inProcess: 'INPROCESS',
+    complete: 'Complete',
+    inProcess: 'In progress',
 };
 export const taskView = {
-    all: 'ALL',
-    complete: 'COMPLETE',
-    inProgress: 'INPROGRESS',
+    all: 'All',
+    complete: 'Complete',
+    inProgress: 'In progress',
 };
 
 class List extends React.Component {
@@ -78,6 +78,20 @@ class List extends React.Component {
                 </div>
             );
         });
+        const filterButtons = [];
+        for (let key in taskView) {
+            this.state.taskView === taskView[key]
+                ? filterButtons.push(<Button value={taskView[key]}
+                                             action={this.filterTask}
+                                             itemId={taskView[key]}
+                                             styleClass='activeButton'
+                                             key={`${key}`}/>)
+                : filterButtons.push(<Button value={taskView[key]}
+                                             action={this.filterTask}
+                                             itemId={taskView[key]}
+                                             key={`${key}`}/>)
+        }
+        console.log('filterButtons', filterButtons);
 
         return (
             <div>
@@ -91,9 +105,7 @@ class List extends React.Component {
                 <div className={style.tasksContainer}>
                     {tasks}
                     <div className={`${style.tasksFilter}`}>
-                        <Button value={'All'} action={this.filterTask} itemId={taskView.all}/>
-                        <Button value={'Complete'} action={this.filterTask} itemId={taskView.complete}/>
-                        <Button value={'In process'} action={this.filterTask} itemId={taskView.inProgress}/>
+                        {filterButtons}
                     </div>
                 </div>
             </div>
