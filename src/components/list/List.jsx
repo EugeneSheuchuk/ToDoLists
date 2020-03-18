@@ -2,6 +2,7 @@ import React from 'react';
 import style from './List.module.css';
 import Button from "../Button/Button";
 import {filterArray} from "../../assets/functions";
+import InputText from "../InputText/InputText";
 
 export const status = {
     complete: 'Complete',
@@ -25,6 +26,7 @@ class List extends React.Component {
         this.addTask = this._addTask.bind(this);
         this.changeTaskStatus = this._onChangeTaskStatus.bind(this);
         this.filterTask = this._onFilterTasks.bind(this);
+        this.typeText = this._onTypeText.bind(this);
     };
 
     _onTypeText(e) {
@@ -91,17 +93,13 @@ class List extends React.Component {
                                              itemId={taskView[key]}
                                              key={`${key}`}/>)
         }
-        console.log('filterButtons', filterButtons);
 
         return (
             <div>
                 <label htmlFor="textInput">Enter your task, please!
-                    <input type="text"
-                           id="textInput"
-                           value={this.state.field}
-                           onChange={(e) => this._onTypeText(e)}/>
-                    <Button value={'Add'} action={this.addTask}/>
+                    <InputText imputId={'textInput'} imputValue={this.state.field} action={this.typeText}/>
                 </label>
+                <Button value={'Add'} action={this.addTask}/>
                 <div className={style.tasksContainer}>
                     {tasks}
                     <div className={`${style.tasksFilter}`}>
