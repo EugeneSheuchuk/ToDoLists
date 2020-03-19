@@ -13,8 +13,14 @@ export function filterArray(array, condition) {
     }
 }
 
-export function saveToStorage(state) {
-    const upDateState = {...state};
-    const stateToString = JSON.stringify(upDateState);
-    localStorage.setItem('toDoList', stateToString);
+export function saveToStorage(state, listId) {
+    const updateState = {...state};
+    const stateToString = JSON.stringify(updateState);
+    localStorage.setItem(listId, stateToString);
+}
+
+export function saveToStorageMainData(state) {
+    const mainState = {...state};
+    const stateToString = JSON.stringify(mainState);
+    localStorage.setItem(mainState.appId, stateToString);
 }

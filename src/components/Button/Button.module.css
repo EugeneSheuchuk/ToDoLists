@@ -1,6 +1,7 @@
 .activeButton {
     color: red;
 }
+
 .addTaskButton {
     padding: 2px;
     margin: 0;
@@ -11,6 +12,7 @@
     font-size: 18px;
     color: green;
 }
+
 .taskButton {
     width: 100%;
 }

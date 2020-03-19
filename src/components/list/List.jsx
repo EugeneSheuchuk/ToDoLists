@@ -36,7 +36,7 @@ class List extends React.Component {
     };
 
     componentDidMount() {
-        const storage = localStorage.getItem('toDoList');
+        const storage = localStorage.getItem(this.props.listId);
         const parseStorage = JSON.parse(storage);
         this.setState({...parseStorage});
     }
@@ -59,7 +59,7 @@ class List extends React.Component {
         tasksList.push(task);
         this.setState({
             taskId, field: '', tasksList,
-        }, () => saveToStorage(this.state));
+        }, () => saveToStorage(this.state, this.props.listId));
     };
 
     _onChangeTaskStatus({e, itemId: id}) {
@@ -70,12 +70,12 @@ class List extends React.Component {
                 item.taskStatus = item.taskStatus === status.inProcess ? status.complete : status.inProcess;
             }
         });
-        this.setState({tasksList}, () => saveToStorage(this.state));
+        this.setState({tasksList}, () => saveToStorage(this.state, this.props.listId));
     }
 
     _onFilterTasks({e, itemId}) {
         e.preventDefault();
-        this.setState({taskView: itemId}, () => saveToStorage(this.state));
+        this.setState({taskView: itemId}, () => saveToStorage(this.state, this.props.listId));
     };
 
     _onEditTask({e, taskId}) {
@@ -88,12 +88,14 @@ class List extends React.Component {
                 editField = item.taskText;
             }
         });
-        this.setState({tasksList, editField, editItemId: taskId}, () => saveToStorage(this.state));
+        this.setState({tasksList, editField, editItemId: taskId},
+            () => saveToStorage(this.state, this.props.listId));
     }
 
     _onEditText(e) {
         const newText = e.target.value;
-        this.setState({editField: newText}, () => saveToStorage(this.state));
+        this.setState({editField: newText},
+            () => saveToStorage(this.state, this.props.listId));
     };
 
     _onSaveEditTask() {
@@ -104,7 +106,8 @@ class List extends React.Component {
                 item.taskText = this.state.editField;
             }
         });
-        this.setState({tasksList, editField: '', editItemId: null}, () => saveToStorage(this.state));
+        this.setState({tasksList, editField: '', editItemId: null},
+            () => saveToStorage(this.state, this.props.listId));
     };
 
     _onPressEnter(e) {
@@ -121,11 +124,14 @@ class List extends React.Component {
         e.preventDefault();
         const tasksList = [...this.state.tasksList];
         const tasklistWithoutTask = tasksList.filter(item => item.taskId !== itemId);
-        this.setState({tasksList: tasklistWithoutTask}, () => saveToStorage(this.state));
+        this.setState({tasksList: tasklistWithoutTask},
+            () => saveToStorage(this.state, this.props.listId));
     }
 
 
     render() {
+        const listName = this.props.listName;
+
         const tasksList = filterArray(this.state.tasksList, this.state.taskView);
         const tasks = tasksList.map((item, index) => {
             return (
@@ -176,6 +182,7 @@ class List extends React.Component {
 
         return (
             <div className={style.listContainer}>
+                <h2>{listName}</h2>
                 <div className={style.proposal}>
                     <label htmlFor="textInput">Enter your task, please!</label>
                     <InputText imputId={'textInput'}
