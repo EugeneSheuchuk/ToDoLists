@@ -1,9 +1,13 @@
 import React from "react";
+import style from './InputText.module.css';
 
 class InputText extends React.Component {
 
     render() {
-        const {imputId, imputValue, action, focus = false, keyAction = null, blur = null} = this.props;
+        const {
+            imputId, imputValue, action,
+            focus = false, keyAction = null, blur = null, name
+        } = this.props;
 
         return (
             <React.Fragment>
@@ -21,7 +25,8 @@ class InputText extends React.Component {
                            if (blur) {
                                blur();
                            }
-                       }}/>
+                       }}
+                       className={`${style[name]}`}/>
             </React.Fragment>
         );
     }

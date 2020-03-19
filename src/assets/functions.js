@@ -12,3 +12,9 @@ export function filterArray(array, condition) {
         return array;
     }
 }
+
+export function saveToStorage(state) {
+    const upDateState = {...state};
+    const stateToString = JSON.stringify(upDateState);
+    localStorage.setItem('toDoList', stateToString);
+}
