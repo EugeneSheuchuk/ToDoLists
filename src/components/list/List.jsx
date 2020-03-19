@@ -142,10 +142,21 @@ class List extends React.Component {
                             : item.taskText}
                     </div>
                     <div className={`${style.taskStatus} ${style.taskItem}`}>{item.taskStatus}</div>
-                    {item.taskStatus === status.inProcess
-                        ? <Button value={'Complete Task'} action={this.changeTaskStatus} itemId={item.taskId}/>
-                        : <Button value={'Undo'} action={this.changeTaskStatus} itemId={item.taskId}/>}
-                    <Button value={'Delete'} action={this.deleteTask} itemId={item.taskId}/>
+                    <div className={`${style.taskButtons} ${style.taskItem}`}>
+                        {item.taskStatus === status.inProcess
+                            ? <Button value={'Complete Task'}
+                                      action={this.changeTaskStatus}
+                                      itemId={item.taskId}
+                                      styleClass='taskButton'/>
+                            : <Button value={'Undo'}
+                                      action={this.changeTaskStatus}
+                                      itemId={item.taskId}
+                                      styleClass='taskButton'/>}
+                        <Button value={'Delete'}
+                                action={this.deleteTask}
+                                itemId={item.taskId}
+                                styleClass='taskButton'/>
+                    </div>
                 </div>
             );
         });
@@ -164,13 +175,15 @@ class List extends React.Component {
         }
 
         return (
-            <div>
-                <label htmlFor="textInput">Enter your task, please!
+            <div className={style.listContainer}>
+                <div className={style.proposal}>
+                    <label htmlFor="textInput">Enter your task, please!</label>
                     <InputText imputId={'textInput'}
                                imputValue={this.state.field}
-                               action={this.typeText}/>
-                </label>
-                <Button value={'Add'} action={this.addTask}/>
+                               action={this.typeText}
+                               name={'taskInput'}/>
+                    <Button value={'Add'} action={this.addTask} styleClass='addTaskButton'/>
+                </div>
                 <div className={style.tasksContainer}>
                     {tasks}
                     <div className={`${style.tasksFilter}`}>
