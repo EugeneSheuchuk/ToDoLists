@@ -1,7 +1,7 @@
 import React from 'react';
 import style from './List.module.css';
 import Button from "../Button/Button";
-import {filterArray} from "../../assets/functions";
+import {filterArray, saveToStorage} from "../../assets/functions";
 import InputText from "../InputText/InputText";
 
 export const status = {
@@ -35,6 +35,12 @@ class List extends React.Component {
         this.deleteTask = this._onDeleteTask.bind(this);
     };
 
+    componentDidMount() {
+        const storage = localStorage.getItem('toDoList');
+        const parseStorage = JSON.parse(storage);
+        this.setState({...parseStorage});
+    }
+
     _onTypeText(e) {
         const newText = e.target.value;
         this.setState({field: newText});
@@ -53,7 +59,7 @@ class List extends React.Component {
         tasksList.push(task);
         this.setState({
             taskId, field: '', tasksList,
-        });
+        }, () => saveToStorage(this.state));
     };
 
     _onChangeTaskStatus({e, itemId: id}) {
@@ -64,12 +70,12 @@ class List extends React.Component {
                 item.taskStatus = item.taskStatus === status.inProcess ? status.complete : status.inProcess;
             }
         });
-        this.setState({tasksList});
+        this.setState({tasksList}, () => saveToStorage(this.state));
     }
 
     _onFilterTasks({e, itemId}) {
         e.preventDefault();
-        this.setState({taskView: itemId});
+        this.setState({taskView: itemId}, () => saveToStorage(this.state));
     };
 
     _onEditTask({e, taskId}) {
@@ -82,12 +88,12 @@ class List extends React.Component {
                 editField = item.taskText;
             }
         });
-        this.setState({tasksList, editField, editItemId: taskId});
+        this.setState({tasksList, editField, editItemId: taskId}, () => saveToStorage(this.state));
     }
 
     _onEditText(e) {
         const newText = e.target.value;
-        this.setState({editField: newText});
+        this.setState({editField: newText}, () => saveToStorage(this.state));
     };
 
     _onSaveEditTask() {
@@ -98,7 +104,7 @@ class List extends React.Component {
                 item.taskText = this.state.editField;
             }
         });
-        this.setState({tasksList, editField: '', editItemId: null});
+        this.setState({tasksList, editField: '', editItemId: null}, () => saveToStorage(this.state));
     };
 
     _onPressEnter(e) {
@@ -115,7 +121,7 @@ class List extends React.Component {
         e.preventDefault();
         const tasksList = [...this.state.tasksList];
         const tasklistWithoutTask = tasksList.filter(item => item.taskId !== itemId);
-        this.setState({tasksList: tasklistWithoutTask});
+        this.setState({tasksList: tasklistWithoutTask}, () => saveToStorage(this.state));
     }
 
 
@@ -160,7 +166,9 @@ class List extends React.Component {
         return (
             <div>
                 <label htmlFor="textInput">Enter your task, please!
-                    <InputText imputId={'textInput'} imputValue={this.state.field} action={this.typeText}/>
+                    <InputText imputId={'textInput'}
+                               imputValue={this.state.field}
+                               action={this.typeText}/>
                 </label>
                 <Button value={'Add'} action={this.addTask}/>
                 <div className={style.tasksContainer}>
