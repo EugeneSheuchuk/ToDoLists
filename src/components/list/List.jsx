@@ -24,6 +24,8 @@ class List extends React.Component {
             taskView: taskView.all,
             editField: '',
             editItemId: null,
+            editListName: '',
+            isEditHeader: false,
         };
         this.addTask = this._addTask.bind(this);
         this.changeTaskStatus = this._onChangeTaskStatus.bind(this);
@@ -33,10 +35,12 @@ class List extends React.Component {
         this.pressEnter = this._onPressEnter.bind(this);
         this.blur = this._onBlureEditTask.bind(this);
         this.deleteTask = this._onDeleteTask.bind(this);
+        this._editHeader = this._onEditHeader.bind(this);
+        this._saveHeader = this._onSaveHeader.bind(this);
     };
 
     componentDidMount() {
-        const storage = localStorage.getItem(this.props.listId);
+        const storage = localStorage.getItem(`list-${this.props.listId}`);
         const parseStorage = JSON.parse(storage);
         this.setState({...parseStorage});
     }
@@ -127,10 +131,30 @@ class List extends React.Component {
         this.setState({tasksList: tasklistWithoutTask},
             () => saveToStorage(this.state, this.props.listId));
     }
-
+    _onStartEditListHeader(currentName) {
+        this.setState({isEditHeader: !this.state.isEditHeader, editListName: currentName});
+    }
+    _onEditHeader(e) {
+        const newText = e.target.value;
+        this.setState({editListName: newText});
+    }
+    _onSaveHeader(e) {
+        if (e === undefined || e.key === 'Enter') {
+            this.props.editListName(this.props.listId, this.state.editListName);
+            this.setState({editListName: '', isEditHeader: !this.state.isEditHeader})
+        }
+    }
 
     render() {
-        const listName = this.props.listName;
+        const {listName, listId, deleteList} = this.props;
+        const listHeader = this.state.isEditHeader
+            ? <InputText imputValue={this.state.editListName}
+                         focus={true}
+                         action={this._editHeader}
+                         keyAction={this._saveHeader}
+                         blur={this._saveHeader}/>
+            : <h2 onDoubleClick={() => this._onStartEditListHeader(listName)}>{listName}</h2>;
+
 
         const tasksList = filterArray(this.state.tasksList, this.state.taskView);
         const tasks = tasksList.map((item, index) => {
@@ -182,7 +206,7 @@ class List extends React.Component {
 
         return (
             <div className={style.listContainer}>
-                <h2>{listName}</h2>
+                {listHeader}
                 <div className={style.proposal}>
                     <label htmlFor="textInput">Enter your task, please!</label>
                     <InputText imputId={'textInput'}
@@ -196,6 +220,9 @@ class List extends React.Component {
                     <div className={`${style.tasksFilter}`}>
                         {filterButtons}
                     </div>
+                </div>
+                <div className={style.deleteList}>
+                    <Button value={'Delete list'} itemId={listId} action={deleteList}/>
                 </div>
             </div>
         );
