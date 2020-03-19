@@ -16,7 +16,7 @@ export function filterArray(array, condition) {
 export function saveToStorage(state, listId) {
     const updateState = {...state};
     const stateToString = JSON.stringify(updateState);
-    localStorage.setItem(listId, stateToString);
+    localStorage.setItem(`list-${listId}`, stateToString);
 }
 
 export function saveToStorageMainData(state, id) {

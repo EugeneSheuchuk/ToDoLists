@@ -1,6 +1,6 @@
 import React from 'react';
 import './App.css';
-import List, {status} from './components/list/List'
+import List from './components/list/List'
 import InputText from "./components/InputText/InputText";
 import Button from "./components/Button/Button";
 import {saveToStorageMainData} from "./assets/functions";
@@ -29,7 +29,7 @@ class App extends React.Component {
     };
     _onAddList = () => {
         const list = {
-            listId: `list-${this.state.listId}`,
+            listId: this.state.listId,
             listName: this.state.listName,
         };
         const listId = this.state.listId + 1;
@@ -44,13 +44,28 @@ class App extends React.Component {
             this._onAddList();
         }
     };
+    _onDeleteList = ({itemId: listId}) => {
+        const lists = [...this.state.lists];
+        const filterLists = lists.filter(item => item.listId !== listId);
+        this.setState({lists: filterLists,}, () => saveToStorageMainData(this.state, APPID));
+    };
+    _onSaveNewListName = (listId, listName) => {
+        const lists = [...this.state.lists];
+        lists.forEach(item => {
+            if (item.listId === listId) {
+                item.listName = listName;
+            }
+        });
+        this.setState({lists,}, () => saveToStorageMainData(this.state, APPID));
+    };
 
 
     render() {
-        console.log(this.state);
         const displayLists = this.state.lists.map(item => <List listName={item.listName}
                                                                 listId={item.listId}
-                                                                key={`key-${item.listId}`}/>);
+                                                                key={`key-${item.listId}`}
+                                                                deleteList={this._onDeleteList}
+                                                                editListName={this._onSaveNewListName}/>);
         return (
             <div className={'app_container'}>
                 <div>

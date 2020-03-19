@@ -23,6 +23,7 @@
     display: grid;
     grid-template-rows: 1fr;
     grid-template-columns: 1fr 3fr 1fr 2fr;
+    margin-bottom: 20px;
 }
 
 .taskItem {
@@ -40,5 +41,8 @@
 
 .tasksFilter {
     text-align: center;
+}
+.deleteList {
+    text-align: right;
 }
 
