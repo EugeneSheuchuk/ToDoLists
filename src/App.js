@@ -5,6 +5,8 @@ import InputText from "./components/InputText/InputText";
 import Button from "./components/Button/Button";
 import {saveToStorageMainData} from "./assets/functions";
 
+const APPID = 'toDoLists';
+
 class App extends React.Component {
     constructor(props) {
         super(props);
@@ -12,12 +14,11 @@ class App extends React.Component {
             listId: 0,
             listName: '',
             lists: [],
-            appId: 'toDoLists',
         };
     }
 
     componentDidMount() {
-        const storage = localStorage.getItem(this.state.appId);
+        const storage = localStorage.getItem(APPID);
         const parseStorage = JSON.parse(storage);
         this.setState({...parseStorage});
     }
@@ -36,7 +37,7 @@ class App extends React.Component {
         lists.push(list);
         this.setState({
             listId, listName: '', lists,
-        }, () => saveToStorageMainData(this.state));
+        }, () => saveToStorageMainData(this.state, APPID));
     };
     _onPressEnter = e => {
         if (e.key === 'Enter') {

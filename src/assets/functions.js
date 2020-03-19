@@ -19,8 +19,8 @@ export function saveToStorage(state, listId) {
     localStorage.setItem(listId, stateToString);
 }
 
-export function saveToStorageMainData(state) {
+export function saveToStorageMainData(state, id) {
     const mainState = {...state};
     const stateToString = JSON.stringify(mainState);
-    localStorage.setItem(mainState.appId, stateToString);
+    localStorage.setItem(id, stateToString);
 }
