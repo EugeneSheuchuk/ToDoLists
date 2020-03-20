@@ -26,6 +26,7 @@ class App extends React.Component {
         this.setState({listName});
     };
     _onAddList = () => {
+        if (this.state.listName.trim() === '') return;
         API.addList(APPID, this.state.listName)
             .then(res => this.setState({...res.data, listName: ''}));
     };
