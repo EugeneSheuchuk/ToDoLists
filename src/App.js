@@ -39,13 +39,9 @@ class App extends React.Component {
             .then(res => this.setState({...res.data}));
     };
     _onSaveNewListName = (listId, listName) => {
-        const lists = [...this.state.lists];
-        lists.forEach(item => {
-            if (item.listId === listId) {
-                item.listName = listName;
-            }
-        });
-        this.setState({lists,}, () => saveToStorageMainData(this.state, APPID));
+        if (listName.trim() === '') return;
+        API.updateListName(APPID, listId, listName)
+            .then(res => this.setState({...res.data}));
     };
 
 

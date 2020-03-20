@@ -13,5 +13,8 @@ export const API = {
     },
     deleteList(id, listId) {
         return instance.delete(`/deleteList/${id}`, {data: {listId}});
+    },
+    updateListName(id, listId, newListName) {
+        return instance.put(`/updateListName/${id}`, {listId, newListName})
     }
 };
