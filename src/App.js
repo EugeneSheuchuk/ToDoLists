@@ -35,9 +35,8 @@ class App extends React.Component {
         }
     };
     _onDeleteList = ({itemId: listId}) => {
-        const lists = [...this.state.lists];
-        const filterLists = lists.filter(item => item.listId !== listId);
-        this.setState({lists: filterLists,}, () => saveToStorageMainData(this.state, APPID));
+        API.deleteList(APPID, listId)
+            .then(res => this.setState({...res.data}));
     };
     _onSaveNewListName = (listId, listName) => {
         const lists = [...this.state.lists];

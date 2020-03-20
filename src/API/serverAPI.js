@@ -10,5 +10,8 @@ export const API = {
     },
     addList(id, listName) {
         return instance.post(`/addList/${id}`,{listName});
+    },
+    deleteList(id, listId) {
+        return instance.delete(`/deleteList/${id}`, {data: {listId}});
     }
 };
