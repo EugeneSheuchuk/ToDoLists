@@ -4,6 +4,7 @@ import List from './components/list/List'
 import InputText from "./components/InputText/InputText";
 import Button from "./components/Button/Button";
 import {saveToStorageMainData} from "./assets/functions";
+import {API} from "./API/serverAPI";
 
 const APPID = 'toDoLists';
 
@@ -11,16 +12,13 @@ class App extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            listId: 0,
             listName: '',
             lists: [],
         };
     }
 
     componentDidMount() {
-        const storage = localStorage.getItem(APPID);
-        const parseStorage = JSON.parse(storage);
-        this.setState({...parseStorage});
+        API.getDataById(APPID).then(res => this.setState({...res.data}));
     }
 
     _onType = e => {
@@ -28,16 +26,8 @@ class App extends React.Component {
         this.setState({listName});
     };
     _onAddList = () => {
-        const list = {
-            listId: this.state.listId,
-            listName: this.state.listName,
-        };
-        const listId = this.state.listId + 1;
-        const lists = [...this.state.lists];
-        lists.push(list);
-        this.setState({
-            listId, listName: '', lists,
-        }, () => saveToStorageMainData(this.state, APPID));
+        API.addList(APPID, this.state.listName)
+            .then(res => this.setState({...res.data, listName: ''}));
     };
     _onPressEnter = e => {
         if (e.key === 'Enter') {
@@ -61,6 +51,7 @@ class App extends React.Component {
 
 
     render() {
+
         const displayLists = this.state.lists.map(item => <List listName={item.listName}
                                                                 listId={item.listId}
                                                                 key={`key-${item.listId}`}

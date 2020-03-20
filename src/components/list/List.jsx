@@ -208,8 +208,8 @@ class List extends React.Component {
             <div className={style.listContainer}>
                 {listHeader}
                 <div className={style.proposal}>
-                    <label htmlFor="textInput">Enter your task, please!</label>
-                    <InputText imputId={'textInput'}
+                    <label htmlFor={`${listName}_${listId}`}>Enter your task, please!</label>
+                    <InputText imputId={`${listName}_${listId}`}
                                imputValue={this.state.field}
                                action={this.typeText}
                                name={'taskInput'}/>
