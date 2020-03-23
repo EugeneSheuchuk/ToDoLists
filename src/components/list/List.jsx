@@ -61,15 +61,11 @@ class List extends React.Component {
             .then(res => this.setState({field: '', tasks: [...res.data]}));
     };
 
-    _onChangeTaskStatus({e, itemId: id}) {
+    _onChangeTaskStatus({e, itemId: taskId}) {
         e.preventDefault();
-        const tasksList = [...this.state.tasksList];
-        tasksList.forEach(item => {
-            if (item.taskId === id) {
-                item.taskStatus = item.taskStatus === status.inProcess ? status.complete : status.inProcess;
-            }
-        });
-        this.setState({tasksList}, () => saveToStorage(this.state, this.props.listId));
+        const {appId, listId} = this.props;
+        API.changeTaskStatus(appId, listId, taskId)
+            .then(res => this.setState({tasks: [...res.data]}));
     }
 
     _onFilterTasks({e, itemId}) {

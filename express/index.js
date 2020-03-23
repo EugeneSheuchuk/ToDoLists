@@ -72,6 +72,14 @@ app.post('/tasks/:id', (req, res) => {
         res.send("The task was't add");
     }
 });
+app.put('/tasks/:id', (req, res) => {
+    if (data[req.params.id]) {
+        const lists = serverFuction.changeTaskStatus(data[req.params.id].lists, req.body.listId, req.body.taskId);
+        data[req.params.id].lists = [...lists];
+        const getListTasks = serverFuction.getListTasks(data[req.params.id].lists, req.body.listId);
+        res.send(getListTasks);
+    }
+});
 
 
 app.listen(port, () => console.log(`Server listening port - ${port}`));

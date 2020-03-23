@@ -1,3 +1,7 @@
+const status = {
+    complete: 'Complete',
+    inProcess: 'In progress',
+};
 const appUsers = {};
 
 
@@ -52,6 +56,21 @@ function addTask(lists, listId, task) {
     });
     return copy;
 }
+function changeTaskStatus(lists, listId, taskId) {
+    const copy = [...lists];
+    copy.forEach(item => {
+        if (item.listId === listId) {
+            const tasksCopy = [...item.tasks];
+            tasksCopy.forEach(i => {
+                if (i.taskId === taskId) {
+                    i.taskStatus = i.taskStatus === status.inProcess ? status.complete : status.inProcess;
+                }
+            });
+            item.tasks = [...tasksCopy];
+        }
+    });
+    return copy;
+}
 
 
 
@@ -74,5 +93,6 @@ module.exports = {
     updateListName: updateListName,
     getListTasks: getListTasks,
     generateId: generateId,
-    addTask: addTask
+    addTask: addTask,
+    changeTaskStatus: changeTaskStatus
 };
