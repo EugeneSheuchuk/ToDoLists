@@ -13,14 +13,3 @@ export function filterArray(array, condition) {
     }
 }
 
-export function saveToStorage(state, listId) {
-    const updateState = {...state};
-    const stateToString = JSON.stringify(updateState);
-    localStorage.setItem(`list-${listId}`, stateToString);
-}
-
-export function saveToStorageMainData(state, id) {
-    const mainState = {...state};
-    const stateToString = JSON.stringify(mainState);
-    localStorage.setItem(id, stateToString);
-}

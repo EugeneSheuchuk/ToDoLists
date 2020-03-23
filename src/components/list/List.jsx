@@ -1,8 +1,9 @@
 import React from 'react';
 import style from './List.module.css';
 import Button from "../Button/Button";
-import {filterArray, saveToStorage} from "../../assets/functions";
+import {filterArray} from "../../assets/functions";
 import InputText from "../InputText/InputText";
+import {API} from "../../API/serverAPI";
 
 export const status = {
     complete: 'Complete',
@@ -18,9 +19,8 @@ class List extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            taskId: 0,
             field: '',
-            tasksList: [],
+            tasks: [],
             taskView: taskView.all,
             editField: '',
             editItemId: null,
@@ -40,9 +40,8 @@ class List extends React.Component {
     };
 
     componentDidMount() {
-        const storage = localStorage.getItem(`list-${this.props.listId}`);
-        const parseStorage = JSON.parse(storage);
-        this.setState({...parseStorage});
+        const {tasks} = this.props;
+        this.setState({tasks: [...tasks]});
     }
 
     _onTypeText(e) {
@@ -52,39 +51,31 @@ class List extends React.Component {
 
     _addTask({e}) {
         e.preventDefault();
+        const {appId, listId} = this.props;
         const task = {
-            taskId: this.state.taskId,
             taskText: this.state.field,
             taskStatus: status.inProcess,
             isEdit: false,
         };
-        const taskId = this.state.taskId + 1;
-        const tasksList = [...this.state.tasksList];
-        tasksList.push(task);
-        this.setState({
-            taskId, field: '', tasksList,
-        }, () => saveToStorage(this.state, this.props.listId));
+        API.addNewTask(appId, listId, task)
+            .then(res => this.setState({field: '', tasks: [...res.data]}));
     };
 
-    _onChangeTaskStatus({e, itemId: id}) {
+    _onChangeTaskStatus({e, itemId: taskId}) {
         e.preventDefault();
-        const tasksList = [...this.state.tasksList];
-        tasksList.forEach(item => {
-            if (item.taskId === id) {
-                item.taskStatus = item.taskStatus === status.inProcess ? status.complete : status.inProcess;
-            }
-        });
-        this.setState({tasksList}, () => saveToStorage(this.state, this.props.listId));
+        const {appId, listId} = this.props;
+        API.changeTaskStatus(appId, listId, taskId)
+            .then(res => this.setState({tasks: [...res.data]}));
     }
 
     _onFilterTasks({e, itemId}) {
         e.preventDefault();
-        this.setState({taskView: itemId}, () => saveToStorage(this.state, this.props.listId));
+        this.setState({taskView: itemId});
     };
 
     _onEditTask({e, taskId}) {
         e.preventDefault();
-        const tasksList = [...this.state.tasksList];
+        const tasksList = [...this.state.tasks];
         let editField = '';
         tasksList.forEach(item => {
             if (item.taskId === taskId) {
@@ -92,26 +83,21 @@ class List extends React.Component {
                 editField = item.taskText;
             }
         });
-        this.setState({tasksList, editField, editItemId: taskId},
-            () => saveToStorage(this.state, this.props.listId));
+        this.setState({tasks: tasksList, editField, editItemId: taskId});
     }
 
     _onEditText(e) {
         const newText = e.target.value;
-        this.setState({editField: newText},
-            () => saveToStorage(this.state, this.props.listId));
+        this.setState({editField: newText});
     };
 
     _onSaveEditTask() {
-        const tasksList = [...this.state.tasksList];
-        tasksList.forEach(item => {
-            if (item.taskId === this.state.editItemId) {
-                item.isEdit = !item.isEdit;
-                item.taskText = this.state.editField;
-            }
-        });
-        this.setState({tasksList, editField: '', editItemId: null},
-            () => saveToStorage(this.state, this.props.listId));
+        const {appId, listId} = this.props;
+        API.changeTask(appId, listId, this.state.editItemId, this.state.editField)
+            .then(res => {
+                console.log('res', res);
+                this.setState({editField: '', editItemId: null, tasks: [...res.data]})
+            });
     };
 
     _onPressEnter(e) {
@@ -124,20 +110,22 @@ class List extends React.Component {
         this._onSaveEditTask();
     }
 
-    _onDeleteTask({e, itemId}) {
+    _onDeleteTask({e, itemId: taskId}) {
         e.preventDefault();
-        const tasksList = [...this.state.tasksList];
-        const tasklistWithoutTask = tasksList.filter(item => item.taskId !== itemId);
-        this.setState({tasksList: tasklistWithoutTask},
-            () => saveToStorage(this.state, this.props.listId));
+        const {appId, listId} = this.props;
+        API.deleteTask(appId, listId, taskId)
+            .then(res => this.setState({tasks: [...res.data]}));
     }
+
     _onStartEditListHeader(currentName) {
         this.setState({isEditHeader: !this.state.isEditHeader, editListName: currentName});
     }
+
     _onEditHeader(e) {
         const newText = e.target.value;
         this.setState({editListName: newText});
     }
+
     _onSaveHeader(e) {
         if (e === undefined || e.key === 'Enter') {
             this.props.editListName(this.props.listId, this.state.editListName);
@@ -156,8 +144,8 @@ class List extends React.Component {
             : <h2 onDoubleClick={() => this._onStartEditListHeader(listName)}>{listName}</h2>;
 
 
-        const tasksList = filterArray(this.state.tasksList, this.state.taskView);
-        const tasks = tasksList.map((item, index) => {
+        const tasksList = filterArray(this.state.tasks, this.state.taskView);
+        const viewTasks = tasksList.map((item, index) => {
             return (
                 <div className={style.taskContainer} key={`${item.taskText}-${index}`}>
                     <div className={`${style.taskNumber} ${style.taskItem}`}>{index + 1}.</div>
@@ -216,7 +204,7 @@ class List extends React.Component {
                     <Button value={'Add'} action={this.addTask} styleClass='addTaskButton'/>
                 </div>
                 <div className={style.tasksContainer}>
-                    {tasks}
+                    {viewTasks}
                     <div className={`${style.tasksFilter}`}>
                         {filterButtons}
                     </div>

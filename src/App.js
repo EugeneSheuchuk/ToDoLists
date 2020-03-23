@@ -3,7 +3,6 @@ import './App.css';
 import List from './components/list/List'
 import InputText from "./components/InputText/InputText";
 import Button from "./components/Button/Button";
-import {saveToStorageMainData} from "./assets/functions";
 import {API} from "./API/serverAPI";
 
 const APPID = 'toDoLists';
@@ -52,7 +51,10 @@ class App extends React.Component {
                                                                 listId={item.listId}
                                                                 key={`key-${item.listId}`}
                                                                 deleteList={this._onDeleteList}
-                                                                editListName={this._onSaveNewListName}/>);
+                                                                editListName={this._onSaveNewListName}
+                                                                tasks={item.tasks}
+                                                                taskView={item.taskView}
+                                                                appId={APPID}/>);
         return (
             <div className={'app_container'}>
                 <div>
