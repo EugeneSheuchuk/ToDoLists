@@ -9,44 +9,70 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 
-app.get('/list/:id', (req, res) => {
-    if (serverFuction.appUsers[req.params.id]) {
-        res.send(serverFuction.appUsers[req.params.id]);
+const data = serverFuction.appUsers;
+const idGenerator = serverFuction.generateId();
+
+app.get('/main/:id', (req, res) => {
+    if (data[req.params.id]) {
+        res.send(data[req.params.id]);
     } else {
         serverFuction.createUser(req.params.id);
-        res.send(serverFuction.appUsers[req.params.id]);
+        res.send(data[req.params.id]);
     }
 });
 
-app.post('/addList/:id', (req, res) => {
-    if (serverFuction.appUsers[req.params.id]) {
-        const list = serverFuction.createList(req.body.listName);
-        serverFuction.appUsers[req.params.id].lists.push(list);
-        res.send(serverFuction.appUsers[req.params.id]);
+app.post('/main/:id', (req, res) => {
+    if (data[req.params.id]) {
+        const list = serverFuction.createList(idGenerator('list'), req.body.listName);
+        data[req.params.id].lists.push(list);
+        res.send(data[req.params.id]);
     } else {
         res.send("List was't create");
     }
 });
-app.put('/updateListName/:id', (req, res) => {
-    if (serverFuction.appUsers[req.params.id]) {
-        const list = serverFuction.updateListName(serverFuction.appUsers[req.params.id].lists,
+app.put('/main/:id', (req, res) => {
+    if (data[req.params.id]) {
+        const list = serverFuction.updateListName(data[req.params.id].lists,
             req.body.listId, req.body.newListName);
-        serverFuction.appUsers[req.params.id].lists = [...list];
-        res.send(serverFuction.appUsers[req.params.id]);
+        data[req.params.id].lists = [...list];
+        res.send(data[req.params.id]);
     } else {
         res.send("List's name was't change");
     }
 });
 
-app.delete('/deleteList/:id', (req, res) => {
-    if (serverFuction.appUsers[req.params.id]) {
-        const filterList = serverFuction.deleteList(serverFuction.appUsers[req.params.id].lists, req.body.listId);
-        serverFuction.appUsers[req.params.id].lists = [...filterList];
-        res.send(serverFuction.appUsers[req.params.id]);
+app.delete('/main/:id', (req, res) => {
+    if (data[req.params.id]) {
+        const filterList = serverFuction.deleteList(data[req.params.id].lists, req.body.listId);
+        data[req.params.id].lists = [...filterList];
+        res.send(data[req.params.id]);
     } else {
         res.send("List was't delete");
     }
 });
+
+
+
+app.get('/tasks', (req, res) => {
+    if (data[req.query.id]) {
+        const getListTasks = serverFuction.getListTasks(data[req.query.id].lists, req.query.listId);
+        res.send(getListTasks);
+    } else {
+        res.send("Can't get list tasks");
+    }
+});
+app.post('/tasks/:id', (req, res) => {
+    if (data[req.params.id]) {
+        const task = {taskId: idGenerator('task'), ...req.body.task};
+        const lists = serverFuction.addTask(data[req.params.id].lists, req.body.listId, task);
+        data[req.params.id].lists = [...lists];
+        const getListTasks = serverFuction.getListTasks(data[req.params.id].lists, req.body.listId);
+        res.send(getListTasks);
+    } else {
+        res.send("The task was't add");
+    }
+});
+
 
 app.listen(port, () => console.log(`Server listening port - ${port}`));
 

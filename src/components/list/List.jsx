@@ -3,6 +3,7 @@ import style from './List.module.css';
 import Button from "../Button/Button";
 import {filterArray, saveToStorage} from "../../assets/functions";
 import InputText from "../InputText/InputText";
+import {API} from "../../API/serverAPI";
 
 export const status = {
     complete: 'Complete',
@@ -18,9 +19,8 @@ class List extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            taskId: 0,
             field: '',
-            tasksList: [],
+            tasks: [],
             taskView: taskView.all,
             editField: '',
             editItemId: null,
@@ -40,9 +40,8 @@ class List extends React.Component {
     };
 
     componentDidMount() {
-        const storage = localStorage.getItem(`list-${this.props.listId}`);
-        const parseStorage = JSON.parse(storage);
-        this.setState({...parseStorage});
+        const {tasks} = this.props;
+        this.setState({tasks: [...tasks]});
     }
 
     _onTypeText(e) {
@@ -52,18 +51,14 @@ class List extends React.Component {
 
     _addTask({e}) {
         e.preventDefault();
+        const {appId, listId} = this.props;
         const task = {
-            taskId: this.state.taskId,
             taskText: this.state.field,
             taskStatus: status.inProcess,
             isEdit: false,
         };
-        const taskId = this.state.taskId + 1;
-        const tasksList = [...this.state.tasksList];
-        tasksList.push(task);
-        this.setState({
-            taskId, field: '', tasksList,
-        }, () => saveToStorage(this.state, this.props.listId));
+        API.addNewTask(appId, listId, task)
+            .then(res => this.setState({field: '', tasks: [...res.data]}));
     };
 
     _onChangeTaskStatus({e, itemId: id}) {
@@ -156,8 +151,8 @@ class List extends React.Component {
             : <h2 onDoubleClick={() => this._onStartEditListHeader(listName)}>{listName}</h2>;
 
 
-        const tasksList = filterArray(this.state.tasksList, this.state.taskView);
-        const tasks = tasksList.map((item, index) => {
+        const tasksList = filterArray(this.state.tasks, this.state.taskView);
+        const viewTasks = tasksList.map((item, index) => {
             return (
                 <div className={style.taskContainer} key={`${item.taskText}-${index}`}>
                     <div className={`${style.taskNumber} ${style.taskItem}`}>{index + 1}.</div>
@@ -216,7 +211,7 @@ class List extends React.Component {
                     <Button value={'Add'} action={this.addTask} styleClass='addTaskButton'/>
                 </div>
                 <div className={style.tasksContainer}>
-                    {tasks}
+                    {viewTasks}
                     <div className={`${style.tasksFilter}`}>
                         {filterButtons}
                     </div>

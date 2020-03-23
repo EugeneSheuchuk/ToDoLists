@@ -1,6 +1,5 @@
-let listId = 0;
-
 const appUsers = {};
+
 
 function createUser(userId) {
     appUsers[userId] = {
@@ -8,13 +7,12 @@ function createUser(userId) {
     };
 }
 
-function createList(listName) {
-    const list = {
-        listId: listId,
+function createList(id, listName) {
+    return {
+        listId: id,
         listName: listName,
+        tasks: [],
     };
-    listId += 1;
-    return list;
 }
 
 function deleteList(lists, listId) {
@@ -34,10 +32,47 @@ function updateListName(lists, listId, newName) {
     });
 }
 
+function getListTasks(lists, listId) {
+    const copy = [...lists];
+    let tasks = [];
+    copy.forEach(item => {
+        if (item.listId === listId) {
+            tasks = [...item.tasks];
+        }
+    });
+    return tasks;
+}
+
+function addTask(lists, listId, task) {
+    const copy = [...lists];
+    copy.forEach(item => {
+        if (item.listId === listId) {
+            item.tasks = [...item.tasks, task];
+        }
+    });
+    return copy;
+}
+
+
+
+
+function generateId() {
+    let id = 0;
+    return function(name) {
+        const gId = `${name}-${id}`;
+        id += 1;
+        return gId;
+    }
+}
+
+
 module.exports = {
     appUsers: appUsers,
     createUser: createUser,
     createList: createList,
     deleteList: deleteList,
-    updateListName: updateListName
+    updateListName: updateListName,
+    getListTasks: getListTasks,
+    generateId: generateId,
+    addTask: addTask
 };
