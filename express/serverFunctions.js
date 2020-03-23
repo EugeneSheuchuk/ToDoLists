@@ -56,6 +56,7 @@ function addTask(lists, listId, task) {
     });
     return copy;
 }
+
 function changeTaskStatus(lists, listId, taskId) {
     const copy = [...lists];
     copy.forEach(item => {
@@ -83,12 +84,29 @@ function deleteTask(lists, listId, taskId) {
     return copy;
 }
 
+function updateTaskText(lists, listId, taskId, newTaskText) {
+    const copy = [...lists];
+    copy.forEach(item => {
+        if (item.listId === listId) {
+            const tasksCopy = [...item.tasks];
+            tasksCopy.forEach(i => {
+                if (i.taskId === taskId) {
+                    i.taskText = newTaskText;
+                }
+            });
+        }
+    });
+    return copy;
+}
 
+function checkReqId(req) {
+    return !(appUsers[req.params.id])
+}
 
 
 function generateId() {
     let id = 0;
-    return function(name) {
+    return function (name) {
         const gId = `${name}-${id}`;
         id += 1;
         return gId;
@@ -97,14 +115,16 @@ function generateId() {
 
 
 module.exports = {
-    appUsers: appUsers,
-    createUser: createUser,
-    createList: createList,
-    deleteList: deleteList,
-    updateListName: updateListName,
-    getListTasks: getListTasks,
-    generateId: generateId,
-    addTask: addTask,
-    changeTaskStatus: changeTaskStatus,
-    deleteTask: deleteTask
+    appUsers,
+    createUser,
+    createList,
+    deleteList,
+    updateListName,
+    getListTasks,
+    generateId,
+    addTask,
+    changeTaskStatus,
+    deleteTask,
+    updateTaskText,
+    checkReqId
 };

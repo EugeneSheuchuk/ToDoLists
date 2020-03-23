@@ -1,7 +1,7 @@
 import React from 'react';
 import style from './List.module.css';
 import Button from "../Button/Button";
-import {filterArray, saveToStorage} from "../../assets/functions";
+import {filterArray} from "../../assets/functions";
 import InputText from "../InputText/InputText";
 import {API} from "../../API/serverAPI";
 
@@ -75,7 +75,7 @@ class List extends React.Component {
 
     _onEditTask({e, taskId}) {
         e.preventDefault();
-        const tasksList = [...this.state.tasksList];
+        const tasksList = [...this.state.tasks];
         let editField = '';
         tasksList.forEach(item => {
             if (item.taskId === taskId) {
@@ -83,26 +83,21 @@ class List extends React.Component {
                 editField = item.taskText;
             }
         });
-        this.setState({tasksList, editField, editItemId: taskId},
-            () => saveToStorage(this.state, this.props.listId));
+        this.setState({tasks: tasksList, editField, editItemId: taskId});
     }
 
     _onEditText(e) {
         const newText = e.target.value;
-        this.setState({editField: newText},
-            () => saveToStorage(this.state, this.props.listId));
+        this.setState({editField: newText});
     };
 
     _onSaveEditTask() {
-        const tasksList = [...this.state.tasksList];
-        tasksList.forEach(item => {
-            if (item.taskId === this.state.editItemId) {
-                item.isEdit = !item.isEdit;
-                item.taskText = this.state.editField;
-            }
-        });
-        this.setState({tasksList, editField: '', editItemId: null},
-            () => saveToStorage(this.state, this.props.listId));
+        const {appId, listId} = this.props;
+        API.changeTask(appId, listId, this.state.editItemId, this.state.editField)
+            .then(res => {
+                console.log('res', res);
+                this.setState({editField: '', editItemId: null, tasks: [...res.data]})
+            });
     };
 
     _onPressEnter(e) {
@@ -121,13 +116,16 @@ class List extends React.Component {
         API.deleteTask(appId, listId, taskId)
             .then(res => this.setState({tasks: [...res.data]}));
     }
+
     _onStartEditListHeader(currentName) {
         this.setState({isEditHeader: !this.state.isEditHeader, editListName: currentName});
     }
+
     _onEditHeader(e) {
         const newText = e.target.value;
         this.setState({editListName: newText});
     }
+
     _onSaveHeader(e) {
         if (e === undefined || e.key === 'Enter') {
             this.props.editListName(this.props.listId, this.state.editListName);

@@ -52,7 +52,6 @@ app.delete('/main/:id', (req, res) => {
 });
 
 
-
 app.get('/tasks', (req, res) => {
     if (data[req.query.id]) {
         const getListTasks = serverFuction.getListTasks(data[req.query.id].lists, req.query.listId);
@@ -73,6 +72,7 @@ app.post('/tasks/:id', (req, res) => {
     }
 });
 app.put('/tasks/:id', (req, res) => {
+    console.log('tasks', req.body);
     if (data[req.params.id]) {
         const lists = serverFuction.changeTaskStatus(data[req.params.id].lists, req.body.listId, req.body.taskId);
         data[req.params.id].lists = [...lists];
@@ -80,6 +80,16 @@ app.put('/tasks/:id', (req, res) => {
         res.send(getListTasks);
     } else {
         res.send("The status of the task was't change");
+    }
+});
+app.put('/tasks/editTask/:id', (req, res) => {
+    if (data[req.params.id]) {
+        const lists = serverFuction.updateTaskText(data[req.params.id].lists, req.body.listId, req.body.taskId, req.body.newTaskText);
+        data[req.params.id].lists = [...lists];
+        const getListTasks = serverFuction.getListTasks(data[req.params.id].lists, req.body.listId);
+        res.send(getListTasks);
+    } else {
+        res.send("The text of the task was't change");
     }
 });
 app.delete('/tasks/:id', (req, res) => {
