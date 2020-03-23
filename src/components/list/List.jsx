@@ -70,7 +70,7 @@ class List extends React.Component {
 
     _onFilterTasks({e, itemId}) {
         e.preventDefault();
-        this.setState({taskView: itemId}, () => saveToStorage(this.state, this.props.listId));
+        this.setState({taskView: itemId});
     };
 
     _onEditTask({e, taskId}) {
@@ -115,12 +115,11 @@ class List extends React.Component {
         this._onSaveEditTask();
     }
 
-    _onDeleteTask({e, itemId}) {
+    _onDeleteTask({e, itemId: taskId}) {
         e.preventDefault();
-        const tasksList = [...this.state.tasksList];
-        const tasklistWithoutTask = tasksList.filter(item => item.taskId !== itemId);
-        this.setState({tasksList: tasklistWithoutTask},
-            () => saveToStorage(this.state, this.props.listId));
+        const {appId, listId} = this.props;
+        API.deleteTask(appId, listId, taskId)
+            .then(res => this.setState({tasks: [...res.data]}));
     }
     _onStartEditListHeader(currentName) {
         this.setState({isEditHeader: !this.state.isEditHeader, editListName: currentName});

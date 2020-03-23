@@ -25,5 +25,8 @@ export const API = {
     },
     changeTaskStatus(id, listId, taskId) {
         return instance.put(`tasks/${id}`, {listId, taskId});
+    },
+    deleteTask(id, listId, taskId) {
+        return instance.delete(`tasks/${id}`, {data: {listId, taskId}});
     }
 };

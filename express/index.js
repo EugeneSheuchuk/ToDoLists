@@ -78,6 +78,18 @@ app.put('/tasks/:id', (req, res) => {
         data[req.params.id].lists = [...lists];
         const getListTasks = serverFuction.getListTasks(data[req.params.id].lists, req.body.listId);
         res.send(getListTasks);
+    } else {
+        res.send("The status of the task was't change");
+    }
+});
+app.delete('/tasks/:id', (req, res) => {
+    if (data[req.params.id]) {
+        const lists = serverFuction.deleteTask(data[req.params.id].lists, req.body.listId, req.body.taskId);
+        data[req.params.id].lists = [...lists];
+        const getListTasks = serverFuction.getListTasks(data[req.params.id].lists, req.body.listId);
+        res.send(getListTasks);
+    } else {
+        res.send("The task was't delete");
     }
 });
 

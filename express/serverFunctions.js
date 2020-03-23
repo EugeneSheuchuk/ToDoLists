@@ -72,6 +72,17 @@ function changeTaskStatus(lists, listId, taskId) {
     return copy;
 }
 
+function deleteTask(lists, listId, taskId) {
+    const copy = [...lists];
+    copy.forEach(item => {
+        if (item.listId === listId) {
+            const tasksCopy = [...item.tasks];
+            item.tasks = [...tasksCopy.filter(i => i.taskId !== taskId)];
+        }
+    });
+    return copy;
+}
+
 
 
 
@@ -94,5 +105,6 @@ module.exports = {
     getListTasks: getListTasks,
     generateId: generateId,
     addTask: addTask,
-    changeTaskStatus: changeTaskStatus
+    changeTaskStatus: changeTaskStatus,
+    deleteTask: deleteTask
 };
