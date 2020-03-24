@@ -1,6 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const serverFunction = require('./../serverFunctions');
+const mongoose = require('mongoose');
+const List = require('./../list');
 
 const data = serverFunction.appUsers;
 const idGenerator = serverFunction.generateId();
@@ -12,12 +14,22 @@ router.use((req, res, next) => {
 });
 
 router.get('/:id', (req, res) => {
-    if (data[req.params.id]) {
-        res.send(data[req.params.id]);
-    } else {
+    if (serverFunction.checkReqId(req)) {
         serverFunction.createUser(req.params.id);
-        res.send(data[req.params.id]);
+        List.find()
+            .then(result => res.send(result))
+            .catch(err => {
+                console.log('router main get / create user ', err);
+                res.send(err);
+            });
+        return;
     }
+    List.find()
+        .then(result => res.send(result))
+        .catch(err => {
+            console.log('router main get / ', err);
+            res.send(err);
+        });
 });
 
 router.post('/:id', (req, res) => {

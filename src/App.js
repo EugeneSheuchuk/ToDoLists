@@ -17,7 +17,7 @@ class App extends React.Component {
     }
 
     componentDidMount() {
-        API.getDataById(APPID).then(res => this.setState({...res.data}));
+        API.getDataById(APPID).then(res => this.setState({lists: [...res.data]}));
     }
 
     _onType = e => {
@@ -48,8 +48,8 @@ class App extends React.Component {
     render() {
 
         const displayLists = this.state.lists.map(item => <List listName={item.listName}
-                                                                listId={item.listId}
-                                                                key={`key-${item.listId}`}
+                                                                listId={item._id}
+                                                                key={`key-${item._id}`}
                                                                 deleteList={this._onDeleteList}
                                                                 editListName={this._onSaveNewListName}
                                                                 tasks={item.tasks}
