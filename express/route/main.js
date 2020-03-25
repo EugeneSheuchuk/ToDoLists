@@ -3,9 +3,6 @@ const router = express.Router();
 const serverFunction = require('./../serverFunctions');
 const mongodb = require('./../db');
 
-const data = serverFunction.appUsers;
-
-
 router.use((req, res, next) => {
     console.log('Main route: ', Date.now());
     next();
@@ -47,14 +44,25 @@ router.post('/:id', async (req, res) => {
         console.log('error in router main post /', e);
     }
 });
-router.put('/:id', (req, res) => {
-    if (data[req.params.id]) {
-        const list = serverFunction.updateListName(data[req.params.id].lists,
-            req.body.listId, req.body.newListName);
-        data[req.params.id].lists = [...list];
-        res.send(data[req.params.id]);
-    } else {
-        res.send("List's name was't change");
+router.put('/:id', async (req, res) => {
+    try {
+        if (serverFunction.checkReqId(req)) {
+            res.send("The name of list was't change");
+            return;
+        }
+        if (req.body.newListName.trim() === '') {
+            res.status(406).send("Can't change to empty list name");
+            return;
+        }
+        const result = await mongodb.changeListName(req.body.listId, req.body.newListName);
+        if (result) {
+            const lists = await mongodb.getData();
+            res.send(lists);
+        } else {
+            res.status(406).send("The name of list was't change");
+        }
+    } catch (e) {
+        console.log('error in router main put /', e);
     }
 });
 

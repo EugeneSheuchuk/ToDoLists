@@ -33,5 +33,13 @@ module.exports = {
         } catch(e) {
             return false;
         }
-    }
+    },
+    async changeListName(id, newName) {
+        try {
+            await List.updateOne({_id: id}, {listName: newName});
+            return true;
+        } catch (e) {
+            return false;
+        }
+    },
 };

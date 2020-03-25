@@ -35,10 +35,7 @@ class App extends React.Component {
             return;
         }
         API.addList(APPID, this.state.listName)
-            .then(res => {
-                console.log('res', res);
-                this.setState({lists: [...res.data], listName: ''})
-            })
+            .then(res => this.setState({lists: [...res.data], listName: ''}))
             .catch(err => this.setState({isError: true, errorText: err.response.data}));
     };
     _onPressEnter = e => {
@@ -52,9 +49,13 @@ class App extends React.Component {
             .catch(err => this.setState({isError: true, errorText: err.response.data}));
     };
     _onSaveNewListName = (listId, listName) => {
-        if (listName.trim() === '') return;
+        if (listName.trim() === '') {
+            this.setState({isError: true, errorText: 'The field cannot be empty'});
+            return;
+        }
         API.updateListName(APPID, listId, listName)
-            .then(res => this.setState({...res.data}));
+            .then(res => this.setState({lists: [...res.data]}))
+            .catch(err => this.setState({isError: true, errorText: err.response.data}));
     };
     _onResetError = () => {
         this.setState({isError: false, errorText: ''});
