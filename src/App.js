@@ -20,7 +20,9 @@ class App extends React.Component {
     }
 
     componentDidMount() {
-        API.getDataById(APPID).then(res => this.setState({lists: [...res.data]}));
+        API.getDataById(APPID)
+            .then(res => this.setState({lists: [...res.data]}))
+            .catch(err => this.setState({isError: true, errorText: err.response.data}));
     }
 
     _onType = e => {
@@ -46,7 +48,8 @@ class App extends React.Component {
     };
     _onDeleteList = ({itemId: listId}) => {
         API.deleteList(APPID, listId)
-            .then(res => this.setState({...res.data}));
+            .then(res => this.setState({lists: [...res.data]}))
+            .catch(err => this.setState({isError: true, errorText: err.response.data}));
     };
     _onSaveNewListName = (listId, listName) => {
         if (listName.trim() === '') return;

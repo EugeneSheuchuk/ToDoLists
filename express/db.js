@@ -15,12 +15,23 @@ module.exports = {
         return List.find();
     },
     async addList(listName) {
-        const newList = new List({
-            _id: mongoose.Types.ObjectId(),
-            listName,
-            tasks: []
-        });
-        await newList.save();
-        return this.getData();
+        try {
+            const newList = new List({
+                listName,
+                tasks: []
+            });
+            await newList.save();
+            return true;
+        } catch (e) {
+            return false;
+        }
+    },
+    async deleteList(id) {
+        try {
+            await List.findOneAndDelete({_id: id});
+            return true;
+        } catch(e) {
+            return false;
+        }
     }
 };
