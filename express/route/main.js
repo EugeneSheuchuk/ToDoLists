@@ -3,6 +3,7 @@ const router = express.Router();
 const serverFunction = require('./../serverFunctions');
 const mongoose = require('mongoose');
 const List = require('./../list');
+const mongodb = require('./../db');
 
 const data = serverFunction.appUsers;
 const idGenerator = serverFunction.generateId();
@@ -13,32 +14,35 @@ router.use((req, res, next) => {
     next();
 });
 
-router.get('/:id', (req, res) => {
-    if (serverFunction.checkReqId(req)) {
-        serverFunction.createUser(req.params.id);
-        List.find()
-            .then(result => res.send(result))
-            .catch(err => {
-                console.log('router main get / create user ', err);
-                res.send(err);
-            });
-        return;
+router.get('/:id', async (req, res) => {
+    try {
+        if (serverFunction.checkReqId(req)) {
+            serverFunction.createUser(req.params.id);
+            const result = await mongodb.getData();
+            res.send(result);
+            return;
+        }
+        const result = await mongodb.getData();
+        res.send(result);
+    } catch (e) {
+        console.log('error in router main get /', e);
     }
-    List.find()
-        .then(result => res.send(result))
-        .catch(err => {
-            console.log('router main get / ', err);
-            res.send(err);
-        });
 });
 
-router.post('/:id', (req, res) => {
-    if (data[req.params.id]) {
-        const list = serverFunction.createList(idGenerator('list'), req.body.listName);
-        data[req.params.id].lists.push(list);
-        res.send(data[req.params.id]);
-    } else {
-        res.send("List was't create");
+router.post('/:id', async (req, res) => {
+    try {
+        if (serverFunction.checkReqId(req)) {
+            res.send("List was't create");
+            return;
+        }
+        if (req.body.listName.trim() === '') {
+            res.status(406).send("Can't create list without name");
+            return;
+        }
+        const result = await mongodb.addList(req.body.listName);
+        res.send(result);
+    } catch (e) {
+        console.log('error in router main post /', e);
     }
 });
 router.put('/:id', (req, res) => {

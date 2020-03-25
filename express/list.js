@@ -7,6 +7,6 @@ const listSchema = new mongoose.Schema({
     tasks: Array
 });
 
-const List = mongoose.model('List', listSchema);
+const List = mongoose.model('lists', listSchema);
 
 module.exports = List;
