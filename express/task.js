@@ -1,10 +1,14 @@
 const mongoose = require('mongoose');
+const List = require('./list');
 
 const taskSchema = new mongoose.Schema({
-    _id: mongoose.Schema.Types.ObjectId,
     taskText: String,
     taskStatus: String,
-    isEdit: Boolean
+    isEdit: Boolean,
+    listId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'List'
+    }
 });
 
 const Task = mongoose.model('Task', taskSchema);
