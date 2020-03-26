@@ -3,9 +3,6 @@ const router = express.Router();
 const serverFunction = require('./../serverFunctions');
 const mongodb = require('./../db');
 
-const data = serverFunction.appUsers;
-
-
 router.use((req, res, next) => {
     console.log('Task route: ', Date.now());
     next();
@@ -24,7 +21,7 @@ router.get('/', async (req, res) => {
         res.status(406).send(e);
     }
 });
-router.post('/:id', async(req, res) => {
+router.post('/:id', async (req, res) => {
     try {
         if (serverFunction.checkReqId(req)) {
             res.status(406).send("You are not authorised");
@@ -62,14 +59,25 @@ router.put('/:id', async (req, res) => {
         res.status(406).send(e);
     }
 });
-router.put('/editTask/:id', (req, res) => {
-    if (data[req.params.id]) {
-        const lists = serverFunction.updateTaskText(data[req.params.id].lists, req.body.listId, req.body.taskId, req.body.newTaskText);
-        data[req.params.id].lists = [...lists];
-        const getListTasks = serverFunction.getListTasks(data[req.params.id].lists, req.body.listId);
-        res.send(getListTasks);
-    } else {
-        res.send("The text of the task was't change");
+router.put('/editTask/:id', async (req, res) => {
+    try {
+        if (serverFunction.checkReqId(req)) {
+            res.status(406).send("You are not authorised");
+            return;
+        }
+        if (req.body.newTaskText.trim() === '') {
+            res.status(406).send("Can't add task without text");
+            return;
+        }
+        const result = await mongodb.changeTaskText(req.body.taskId, req.body.newTaskText);
+        if (result) {
+            const tasks = await mongodb.getListTasks(req.body.listId);
+            res.send(tasks);
+        } else {
+            res.status(406).send("The task text was't change");
+        }
+    } catch (e) {
+        res.status(406).send(e);
     }
 });
 router.delete('/:id', async (req, res) => {

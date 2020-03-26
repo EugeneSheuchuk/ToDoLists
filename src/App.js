@@ -19,7 +19,7 @@ class App extends React.Component {
         };
     };
 
-    componentDidMount =() => {
+    componentDidMount = () => {
         API.getDataById(APPID)
             .then(res => this.setState({lists: [...res.data]}))
             .catch(err => this.setState({isError: true, errorText: err.response.data}));
@@ -29,6 +29,7 @@ class App extends React.Component {
         const listName = e.target.value;
         this.setState({listName});
     };
+
     _onAddList = () => {
         if (this.state.listName.trim() === '') {
             this.setState({isError: true, errorText: 'The field cannot be empty'});
@@ -38,16 +39,19 @@ class App extends React.Component {
             .then(res => this.setState({lists: [...res.data], listName: ''}))
             .catch(err => this.setState({isError: true, errorText: err.response.data}));
     };
+
     _onPressEnter = e => {
         if (e.key === 'Enter') {
             this._onAddList();
         }
     };
+
     _onDeleteList = ({itemId: listId}) => {
         API.deleteList(APPID, listId)
             .then(res => this.setState({lists: [...res.data]}))
             .catch(err => this.setState({isError: true, errorText: err.response.data}));
     };
+
     _onSaveNewListName = (listId, listName) => {
         if (listName.trim() === '') {
             this.setState({isError: true, errorText: 'The field cannot be empty'});
@@ -57,10 +61,10 @@ class App extends React.Component {
             .then(res => this.setState({lists: [...res.data]}))
             .catch(err => this.setState({isError: true, errorText: err.response.data}));
     };
+
     _onResetError = () => {
         this.setState({isError: false, errorText: ''});
     };
-
 
     render() {
         const displayLists = this.state.lists.map(item => <List listName={item.listName}

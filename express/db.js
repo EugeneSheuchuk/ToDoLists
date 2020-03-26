@@ -23,8 +23,7 @@ module.exports = {
     async addList(listName) {
         try {
             const newList = new List({
-                listName,
-                tasks: []
+                listName
             });
             await newList.save();
             return true;
@@ -36,7 +35,7 @@ module.exports = {
         try {
             await List.findOneAndDelete({_id: id});
             return true;
-        } catch(e) {
+        } catch (e) {
             return false;
         }
     },
@@ -71,6 +70,14 @@ module.exports = {
         try {
             const newStatus = currentStatus === status.inProcess ? status.complete : status.inProcess;
             await Task.updateOne({_id: taskId}, {taskStatus: newStatus});
+            return true;
+        } catch (e) {
+            return false;
+        }
+    },
+    async changeTaskText(id, newText) {
+        try {
+            await Task.updateOne({_id: id}, {taskText: newText});
             return true;
         } catch (e) {
             return false;
