@@ -4,6 +4,7 @@ import List from './components/list/List'
 import InputText from "./components/InputText/InputText";
 import Button from "./components/Button/Button";
 import {API} from "./API/serverAPI";
+import Error from "./components/Error/Error";
 
 const APPID = 'toDoLists';
 
@@ -13,11 +14,15 @@ class App extends React.Component {
         this.state = {
             listName: '',
             lists: [],
+            isError: false,
+            errorText: ''
         };
     }
 
     componentDidMount() {
-        API.getDataById(APPID).then(res => this.setState({...res.data}));
+        API.getDataById(APPID)
+            .then(res => this.setState({lists: [...res.data]}))
+            .catch(err => this.setState({isError: true, errorText: err.response.data}));
     }
 
     _onType = e => {
@@ -25,9 +30,13 @@ class App extends React.Component {
         this.setState({listName});
     };
     _onAddList = () => {
-        if (this.state.listName.trim() === '') return;
+        if (this.state.listName.trim() === '') {
+            this.setState({isError: true, errorText: 'The field cannot be empty'});
+            return;
+        }
         API.addList(APPID, this.state.listName)
-            .then(res => this.setState({...res.data, listName: ''}));
+            .then(res => this.setState({lists: [...res.data], listName: ''}))
+            .catch(err => this.setState({isError: true, errorText: err.response.data}));
     };
     _onPressEnter = e => {
         if (e.key === 'Enter') {
@@ -36,25 +45,36 @@ class App extends React.Component {
     };
     _onDeleteList = ({itemId: listId}) => {
         API.deleteList(APPID, listId)
-            .then(res => this.setState({...res.data}));
+            .then(res => this.setState({lists: [...res.data]}))
+            .catch(err => this.setState({isError: true, errorText: err.response.data}));
     };
     _onSaveNewListName = (listId, listName) => {
-        if (listName.trim() === '') return;
+        if (listName.trim() === '') {
+            this.setState({isError: true, errorText: 'The field cannot be empty'});
+            return;
+        }
         API.updateListName(APPID, listId, listName)
-            .then(res => this.setState({...res.data}));
+            .then(res => this.setState({lists: [...res.data]}))
+            .catch(err => this.setState({isError: true, errorText: err.response.data}));
+    };
+    _onResetError = () => {
+        this.setState({isError: false, errorText: ''});
     };
 
 
     render() {
-
         const displayLists = this.state.lists.map(item => <List listName={item.listName}
-                                                                listId={item.listId}
-                                                                key={`key-${item.listId}`}
+                                                                listId={item._id}
+                                                                key={`key-${item._id}`}
                                                                 deleteList={this._onDeleteList}
                                                                 editListName={this._onSaveNewListName}
                                                                 tasks={item.tasks}
                                                                 taskView={item.taskView}
                                                                 appId={APPID}/>);
+        const viewComponent = this.state.isError
+            ? <Error errorText={this.state.errorText} errorReset={this._onResetError}/>
+            : displayLists;
+
         return (
             <div className={'app_container'}>
                 <div>
@@ -65,7 +85,7 @@ class App extends React.Component {
                     <Button value={'Add list'} action={this._onAddList}/>
                 </div>
                 <div>
-                    {displayLists}
+                    {viewComponent}
                 </div>
             </div>
         );

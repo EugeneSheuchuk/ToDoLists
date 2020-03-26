@@ -6,9 +6,7 @@ const appUsers = {};
 
 
 function createUser(userId) {
-    appUsers[userId] = {
-        lists: [],
-    };
+    appUsers[userId] = true;
 }
 
 function createList(id, listName) {
