@@ -46,7 +46,8 @@ class List extends React.Component {
     componentDidMount() {
         const {appId, listId} = this.props;
         API.getListTasks(appId, listId)
-            .then(res => this.setState({tasks: [...res.data]}));
+            .then(res => this.setState({tasks: [...res.data]}))
+            .catch(err => this.setState({isError: true, errorText: err.response.data}));
     };
 
     _onTypeText(e) {
@@ -72,11 +73,12 @@ class List extends React.Component {
             .catch(err => this.setState({isError: true, errorText: err.response.data}));
     };
 
-    _onChangeTaskStatus({e, itemId: taskId}) {
+    _onChangeTaskStatus({e, itemId: taskId, data: currentStatus}) {
         e.preventDefault();
         const {appId, listId} = this.props;
-        API.changeTaskStatus(appId, listId, taskId)
-            .then(res => this.setState({tasks: [...res.data]}));
+        API.changeTaskStatus(appId, listId, taskId, currentStatus)
+            .then(res => this.setState({tasks: [...res.data]}))
+            .catch(err => this.setState({isError: true, errorText: err.response.data}));
     };
 
     _onFilterTasks({e, itemId}) {
@@ -180,11 +182,13 @@ class List extends React.Component {
                             ? <Button value={'Complete Task'}
                                       action={this.changeTaskStatus}
                                       itemId={item._id}
-                                      styleClass='taskButton'/>
+                                      styleClass='taskButton'
+                                      data={item.taskStatus}/>
                             : <Button value={'Undo'}
                                       action={this.changeTaskStatus}
                                       itemId={item._id}
-                                      styleClass='taskButton'/>}
+                                      styleClass='taskButton'
+                                      data={item.taskStatus}/>}
                         <Button value={'Delete'}
                                 action={this.deleteTask}
                                 itemId={item._id}

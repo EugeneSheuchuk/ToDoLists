@@ -23,8 +23,8 @@ export const API = {
     addNewTask(id, task) {
         return instance.post(`tasks/${id}`, {task});
     },
-    changeTaskStatus(id, listId, taskId) {
-        return instance.put(`tasks/${id}`, {listId, taskId});
+    changeTaskStatus(id, listId, taskId, currentStatus) {
+        return instance.put(`tasks/${id}`, {listId, taskId, currentStatus});
     },
     changeTask(id, listId, taskId, newTaskText) {
         return instance.put(`tasks/editTask/${id}`, {listId, taskId, newTaskText});

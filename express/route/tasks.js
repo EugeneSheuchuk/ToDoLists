@@ -15,20 +15,19 @@ router.use((req, res, next) => {
 router.get('/', async (req, res) => {
     try {
         if (serverFunction.checkReqId(req)) {
-            res.send("Cannot get tasks");
+            res.status(406).send("You are not authorised");
             return;
         }
         const tasks = await mongodb.getListTasks(req.query.listId);
         res.send(tasks);
     } catch (e) {
-        res.send("Cannot get tasks");
+        res.status(406).send(e);
     }
 });
 router.post('/:id', async(req, res) => {
     try {
         if (serverFunction.checkReqId(req)) {
-            console.log('error');
-            res.send("The task was't add");
+            res.status(406).send("You are not authorised");
             return;
         }
         if (req.body.task.taskText.trim() === '') {
@@ -40,21 +39,27 @@ router.post('/:id', async(req, res) => {
             const tasks = await mongodb.getListTasks(req.body.task.listId);
             res.send(tasks);
         } else {
-            console.log('router task post /', result);
+            res.status(406).send("The task was't add");
         }
     } catch (e) {
-        res.send("The task was't add");
+        res.status(406).send(e);
     }
 });
-router.put('/:id', (req, res) => {
-    console.log('tasks', req.body);
-    if (data[req.params.id]) {
-        const lists = serverFunction.changeTaskStatus(data[req.params.id].lists, req.body.listId, req.body.taskId);
-        data[req.params.id].lists = [...lists];
-        const getListTasks = serverFunction.getListTasks(data[req.params.id].lists, req.body.listId);
-        res.send(getListTasks);
-    } else {
-        res.send("The status of the task was't change");
+router.put('/:id', async (req, res) => {
+    try {
+        if (serverFunction.checkReqId(req)) {
+            res.status(406).send("You are not authorised");
+            return;
+        }
+        const result = await mongodb.changeTaskStatus(req.body.taskId, req.body.currentStatus);
+        if (result) {
+            const tasks = await mongodb.getListTasks(req.body.listId);
+            res.send(tasks);
+        } else {
+            res.status(406).send("The task status was't change");
+        }
+    } catch (e) {
+        res.status(406).send(e);
     }
 });
 router.put('/editTask/:id', (req, res) => {
