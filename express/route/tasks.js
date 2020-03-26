@@ -1,9 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const serverFunction = require('./../serverFunctions');
+const mongodb = require('./../db');
 
 const data = serverFunction.appUsers;
-const idGenerator = serverFunction.generateId();
 
 
 router.use((req, res, next) => {
@@ -12,22 +12,33 @@ router.use((req, res, next) => {
 });
 
 
-router.get('/', (req, res) => {
-    if (data[req.query.id]) {
-        const getListTasks = serverFunction.getListTasks(data[req.query.id].lists, req.query.listId);
-        res.send(getListTasks);
-    } else {
-        res.send("Can't get list tasks");
+router.get('/', async (req, res) => {
+    try {
+        if (serverFunction.checkReqId(req)) {
+            res.send("Cannot get tasks");
+            return;
+        }
+        const tasks = await mongodb.getListTasks(req.query.listId);
+        res.send(tasks);
+    } catch (e) {
+        res.send("Cannot get tasks");
     }
 });
-router.post('/:id', (req, res) => {
-    if (data[req.params.id]) {
-        const task = {taskId: idGenerator('task'), ...req.body.task};
-        const lists = serverFunction.addTask(data[req.params.id].lists, req.body.listId, task);
-        data[req.params.id].lists = [...lists];
-        const getListTasks = serverFunction.getListTasks(data[req.params.id].lists, req.body.listId);
-        res.send(getListTasks);
-    } else {
+router.post('/:id', async(req, res) => {
+    try {
+        if (serverFunction.checkReqId(req)) {
+            console.log('error');
+            res.send("The task was't add");
+            return;
+        }
+        const result = await mongodb.addTask(req.body.task);
+        if (result) {
+            const tasks = await mongodb.getListTasks(req.body.task.listId);
+            res.send(tasks);
+        } else {
+            console.log('router task post /', result);
+        }
+    } catch (e) {
         res.send("The task was't add");
     }
 });

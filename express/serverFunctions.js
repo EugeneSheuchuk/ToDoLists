@@ -98,7 +98,7 @@ function updateTaskText(lists, listId, taskId, newTaskText) {
 }
 
 function checkReqId(req) {
-    return !(appUsers[req.params.id])
+    return !(appUsers[req.params.id]) && !(appUsers[req.query.id])
 }
 
 

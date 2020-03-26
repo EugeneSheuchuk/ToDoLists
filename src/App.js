@@ -68,7 +68,6 @@ class App extends React.Component {
                                                                 key={`key-${item._id}`}
                                                                 deleteList={this._onDeleteList}
                                                                 editListName={this._onSaveNewListName}
-                                                                tasks={item.tasks}
                                                                 taskView={item.taskView}
                                                                 appId={APPID}/>);
         const viewComponent = this.state.isError

@@ -20,8 +20,8 @@ export const API = {
     getListTasks(id, listId) {
         return instance.get('tasks', {params: {id, listId}});
     },
-    addNewTask(id, listId, task) {
-        return instance.post(`tasks/${id}`, {listId, task});
+    addNewTask(id, task) {
+        return instance.post(`tasks/${id}`, {task});
     },
     changeTaskStatus(id, listId, taskId) {
         return instance.put(`tasks/${id}`, {listId, taskId});

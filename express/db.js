@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const List = require('./list');
+const Task = require('./task');
 
 module.exports = {
     connectDB() {
@@ -37,6 +38,25 @@ module.exports = {
     async changeListName(id, newName) {
         try {
             await List.updateOne({_id: id}, {listName: newName});
+            return true;
+        } catch (e) {
+            return false;
+        }
+    },
+    async getListTasks(listId) {
+        try {
+            return await Task.find({listId});
+        } catch (e) {
+            console.log('error in getListTasks', e);
+        }
+
+    },
+    async addTask(task) {
+        try {
+            const newTask = new Task({
+                ...task,
+            });
+            await newTask.save();
             return true;
         } catch (e) {
             return false;

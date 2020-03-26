@@ -40,8 +40,9 @@ class List extends React.Component {
     };
 
     componentDidMount() {
-        const {tasks} = this.props;
-        this.setState({tasks: [...tasks]});
+        const {appId, listId} = this.props;
+        API.getListTasks(appId, listId)
+            .then(res => this.setState({tasks: [...res.data]}));
     }
 
     _onTypeText(e) {
@@ -56,8 +57,9 @@ class List extends React.Component {
             taskText: this.state.field,
             taskStatus: status.inProcess,
             isEdit: false,
+            listId,
         };
-        API.addNewTask(appId, listId, task)
+        API.addNewTask(appId, task)
             .then(res => this.setState({field: '', tasks: [...res.data]}));
     };
 
@@ -150,7 +152,7 @@ class List extends React.Component {
                 <div className={style.taskContainer} key={`${item.taskText}-${index}`}>
                     <div className={`${style.taskNumber} ${style.taskItem}`}>{index + 1}.</div>
                     <div className={`${style.taskText} ${style.taskItem}`}
-                         onDoubleClick={(e) => this._onEditTask({e, taskId: item.taskId})}>
+                         onDoubleClick={(e) => this._onEditTask({e, taskId: item._id})}>
                         {item.isEdit
                             ? <InputText imputValue={this.state.editField}
                                          focus={true}
@@ -164,15 +166,15 @@ class List extends React.Component {
                         {item.taskStatus === status.inProcess
                             ? <Button value={'Complete Task'}
                                       action={this.changeTaskStatus}
-                                      itemId={item.taskId}
+                                      itemId={item._id}
                                       styleClass='taskButton'/>
                             : <Button value={'Undo'}
                                       action={this.changeTaskStatus}
-                                      itemId={item.taskId}
+                                      itemId={item._id}
                                       styleClass='taskButton'/>}
                         <Button value={'Delete'}
                                 action={this.deleteTask}
-                                itemId={item.taskId}
+                                itemId={item._id}
                                 styleClass='taskButton'/>
                     </div>
                 </div>
