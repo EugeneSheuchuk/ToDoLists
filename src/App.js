@@ -17,13 +17,13 @@ class App extends React.Component {
             isError: false,
             errorText: ''
         };
-    }
+    };
 
-    componentDidMount() {
+    componentDidMount =() => {
         API.getDataById(APPID)
             .then(res => this.setState({lists: [...res.data]}))
             .catch(err => this.setState({isError: true, errorText: err.response.data}));
-    }
+    };
 
     _onType = e => {
         const listName = e.target.value;

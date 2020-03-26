@@ -4,6 +4,7 @@ import Button from "../Button/Button";
 import {filterArray} from "../../assets/functions";
 import InputText from "../InputText/InputText";
 import {API} from "../../API/serverAPI";
+import Error from "../Error/Error";
 
 export const status = {
     complete: 'Complete',
@@ -26,6 +27,8 @@ class List extends React.Component {
             editItemId: null,
             editListName: '',
             isEditHeader: false,
+            isError: false,
+            errorText: ''
         };
         this.addTask = this._addTask.bind(this);
         this.changeTaskStatus = this._onChangeTaskStatus.bind(this);
@@ -37,13 +40,14 @@ class List extends React.Component {
         this.deleteTask = this._onDeleteTask.bind(this);
         this._editHeader = this._onEditHeader.bind(this);
         this._saveHeader = this._onSaveHeader.bind(this);
+        this.resetError = this._onResetError.bind(this);
     };
 
     componentDidMount() {
         const {appId, listId} = this.props;
         API.getListTasks(appId, listId)
             .then(res => this.setState({tasks: [...res.data]}));
-    }
+    };
 
     _onTypeText(e) {
         const newText = e.target.value;
@@ -53,6 +57,10 @@ class List extends React.Component {
     _addTask({e}) {
         e.preventDefault();
         const {appId, listId} = this.props;
+        if (this.state.field.trim() === '') {
+            this.setState({isError: true, errorText: 'The field cannot be empty'});
+            return;
+        }
         const task = {
             taskText: this.state.field,
             taskStatus: status.inProcess,
@@ -60,7 +68,8 @@ class List extends React.Component {
             listId,
         };
         API.addNewTask(appId, task)
-            .then(res => this.setState({field: '', tasks: [...res.data]}));
+            .then(res => this.setState({field: '', tasks: [...res.data]}))
+            .catch(err => this.setState({isError: true, errorText: err.response.data}));
     };
 
     _onChangeTaskStatus({e, itemId: taskId}) {
@@ -68,7 +77,7 @@ class List extends React.Component {
         const {appId, listId} = this.props;
         API.changeTaskStatus(appId, listId, taskId)
             .then(res => this.setState({tasks: [...res.data]}));
-    }
+    };
 
     _onFilterTasks({e, itemId}) {
         e.preventDefault();
@@ -86,7 +95,7 @@ class List extends React.Component {
             }
         });
         this.setState({tasks: tasksList, editField, editItemId: taskId});
-    }
+    };
 
     _onEditText(e) {
         const newText = e.target.value;
@@ -106,34 +115,38 @@ class List extends React.Component {
         if (e.key === 'Enter') {
             this._onSaveEditTask();
         }
-    }
+    };
 
     _onBlureEditTask() {
         this._onSaveEditTask();
-    }
+    };
 
     _onDeleteTask({e, itemId: taskId}) {
         e.preventDefault();
         const {appId, listId} = this.props;
         API.deleteTask(appId, listId, taskId)
             .then(res => this.setState({tasks: [...res.data]}));
-    }
+    };
 
     _onStartEditListHeader(currentName) {
         this.setState({isEditHeader: !this.state.isEditHeader, editListName: currentName});
-    }
+    };
 
     _onEditHeader(e) {
         const newText = e.target.value;
         this.setState({editListName: newText});
-    }
+    };
 
     _onSaveHeader(e) {
         if (e === undefined || e.key === 'Enter') {
             this.props.editListName(this.props.listId, this.state.editListName);
             this.setState({editListName: '', isEditHeader: !this.state.isEditHeader})
         }
-    }
+    };
+
+    _onResetError() {
+        this.setState({isError: false, errorText: ''});
+    };
 
     render() {
         const {listName, listId, deleteList} = this.props;
@@ -193,6 +206,20 @@ class List extends React.Component {
                                              itemId={taskView[key]}
                                              key={`${key}`}/>)
         }
+        const display = [
+            <div className={style.tasksContainer} key={`task_with_filterButtons-${listId}`}>
+                {viewTasks}
+                <div className={`${style.tasksFilter}`}>
+                    {filterButtons}
+                </div>
+            </div>,
+            <div className={style.deleteList} key={`delete_list-${listId}`}>
+                <Button value={'Delete list'} itemId={listId} action={deleteList} />
+            </div>];
+
+        const viewComponent = this.state.isError
+            ? <Error errorText={this.state.errorText} errorReset={this.resetError}/>
+            : display;
 
         return (
             <div className={style.listContainer}>
@@ -205,15 +232,7 @@ class List extends React.Component {
                                name={'taskInput'}/>
                     <Button value={'Add'} action={this.addTask} styleClass='addTaskButton'/>
                 </div>
-                <div className={style.tasksContainer}>
-                    {viewTasks}
-                    <div className={`${style.tasksFilter}`}>
-                        {filterButtons}
-                    </div>
-                </div>
-                <div className={style.deleteList}>
-                    <Button value={'Delete list'} itemId={listId} action={deleteList}/>
-                </div>
+                {viewComponent}
             </div>
         );
     }

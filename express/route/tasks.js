@@ -31,6 +31,10 @@ router.post('/:id', async(req, res) => {
             res.send("The task was't add");
             return;
         }
+        if (req.body.task.taskText.trim() === '') {
+            res.status(406).send("Can't add task without text");
+            return;
+        }
         const result = await mongodb.addTask(req.body.task);
         if (result) {
             const tasks = await mongodb.getListTasks(req.body.task.listId);
