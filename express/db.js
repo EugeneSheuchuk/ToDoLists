@@ -76,4 +76,12 @@ module.exports = {
             return false;
         }
     },
+    async deleteTask(taskId) {
+        try {
+            await Task.findOneAndDelete({_id: taskId});
+            return true;
+        } catch (e) {
+            return false;
+        }
+    },
 };

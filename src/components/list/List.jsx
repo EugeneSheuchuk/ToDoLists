@@ -127,7 +127,8 @@ class List extends React.Component {
         e.preventDefault();
         const {appId, listId} = this.props;
         API.deleteTask(appId, listId, taskId)
-            .then(res => this.setState({tasks: [...res.data]}));
+            .then(res => this.setState({tasks: [...res.data]}))
+            .catch(err => this.setState({isError: true, errorText: err.response.data}));
     };
 
     _onStartEditListHeader(currentName) {

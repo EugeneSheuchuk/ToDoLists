@@ -72,14 +72,21 @@ router.put('/editTask/:id', (req, res) => {
         res.send("The text of the task was't change");
     }
 });
-router.delete('/:id', (req, res) => {
-    if (data[req.params.id]) {
-        const lists = serverFunction.deleteTask(data[req.params.id].lists, req.body.listId, req.body.taskId);
-        data[req.params.id].lists = [...lists];
-        const getListTasks = serverFunction.getListTasks(data[req.params.id].lists, req.body.listId);
-        res.send(getListTasks);
-    } else {
-        res.send("The task was't delete");
+router.delete('/:id', async (req, res) => {
+    try {
+        if (serverFunction.checkReqId(req)) {
+            res.status(406).send("You are not authorised");
+            return;
+        }
+        const result = await mongodb.deleteTask(req.body.taskId);
+        if (result) {
+            const tasks = await mongodb.getListTasks(req.body.listId);
+            res.send(tasks);
+        } else {
+            res.status(406).send("The task was't delete");
+        }
+    } catch (e) {
+        res.status(406).send(e);
     }
 });
 
