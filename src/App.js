@@ -17,18 +17,19 @@ class App extends React.Component {
             isError: false,
             errorText: ''
         };
-    }
+    };
 
-    componentDidMount() {
+    componentDidMount = () => {
         API.getDataById(APPID)
             .then(res => this.setState({lists: [...res.data]}))
             .catch(err => this.setState({isError: true, errorText: err.response.data}));
-    }
+    };
 
     _onType = e => {
         const listName = e.target.value;
         this.setState({listName});
     };
+
     _onAddList = () => {
         if (this.state.listName.trim() === '') {
             this.setState({isError: true, errorText: 'The field cannot be empty'});
@@ -38,16 +39,19 @@ class App extends React.Component {
             .then(res => this.setState({lists: [...res.data], listName: ''}))
             .catch(err => this.setState({isError: true, errorText: err.response.data}));
     };
+
     _onPressEnter = e => {
         if (e.key === 'Enter') {
             this._onAddList();
         }
     };
+
     _onDeleteList = ({itemId: listId}) => {
         API.deleteList(APPID, listId)
             .then(res => this.setState({lists: [...res.data]}))
             .catch(err => this.setState({isError: true, errorText: err.response.data}));
     };
+
     _onSaveNewListName = (listId, listName) => {
         if (listName.trim() === '') {
             this.setState({isError: true, errorText: 'The field cannot be empty'});
@@ -57,10 +61,10 @@ class App extends React.Component {
             .then(res => this.setState({lists: [...res.data]}))
             .catch(err => this.setState({isError: true, errorText: err.response.data}));
     };
+
     _onResetError = () => {
         this.setState({isError: false, errorText: ''});
     };
-
 
     render() {
         const displayLists = this.state.lists.map(item => <List listName={item.listName}
@@ -68,7 +72,6 @@ class App extends React.Component {
                                                                 key={`key-${item._id}`}
                                                                 deleteList={this._onDeleteList}
                                                                 editListName={this._onSaveNewListName}
-                                                                tasks={item.tasks}
                                                                 taskView={item.taskView}
                                                                 appId={APPID}/>);
         const viewComponent = this.state.isError
