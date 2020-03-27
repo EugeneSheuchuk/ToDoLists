@@ -33,6 +33,7 @@ module.exports = {
     },
     async deleteList(id) {
         try {
+            await Task.deleteMany({listId: id});
             await List.findOneAndDelete({_id: id});
             return true;
         } catch (e) {

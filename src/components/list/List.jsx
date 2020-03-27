@@ -110,7 +110,13 @@ class List extends React.Component {
         }
     };
 
-    _onBlureEditTask = () => {
+    _onPressEnterToAddTask = (e) => {
+        if (e.key === 'Enter') {
+            this._onAddTask({e});
+        }
+    };
+
+    _onBlurEditTask = () => {
         this._onSaveEditTask();
     };
 
@@ -165,7 +171,7 @@ class List extends React.Component {
                                          focus={true}
                                          action={this._onEditText}
                                          keyAction={this._onPressEnter}
-                                         blur={this._onBlureEditTask}/>
+                                         blur={this._onBlurEditTask}/>
                             : item.taskText}
                     </div>
                     <div className={`${style.taskStatus} ${style.taskItem}`}>{item.taskStatus}</div>
@@ -225,7 +231,8 @@ class List extends React.Component {
                     <InputText imputId={`${listName}_${listId}`}
                                imputValue={this.state.field}
                                action={this._onTypeText}
-                               name={'taskInput'}/>
+                               name={'taskInput'}
+                               keyAction={this._onPressEnterToAddTask}/>
                     <Button value={'Add'} action={this._onAddTask} styleClass='addTaskButton'/>
                 </div>
                 {viewComponent}
