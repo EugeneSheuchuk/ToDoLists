@@ -1,10 +1,11 @@
 import React from 'react';
+import {Redirect} from "react-router-dom";
 import './App.css';
-import List from './components/list/List'
-import InputText from "./components/InputText/InputText";
-import Button from "./components/Button/Button";
-import {API} from "./API/serverAPI";
-import Error from "./components/Error/Error";
+import List from './../list/List'
+import InputText from "./../InputText/InputText";
+import Button from "./../Button/Button";
+import {API} from "./../../API/serverAPI";
+import Error from "./../Error/Error";
 
 const APPID = 'toDoLists';
 
@@ -67,6 +68,9 @@ class App extends React.Component {
     };
 
     render() {
+        const isAuth = this.props.isAuth;
+        if (!isAuth) return <Redirect to={'/auth'}/>;
+
         const displayLists = this.state.lists.map(item => <List listName={item.listName}
                                                                 listId={item._id}
                                                                 key={`key-${item._id}`}
