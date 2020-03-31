@@ -17,7 +17,8 @@ class Main extends React.Component {
         const isAuth = this.state.isAuth;
 
         return (
-            <div>
+            <div className={style.main_container}>
+                <h1>The todo list -  application which help to save your time</h1>
                 <Switch>
                     <Route exact path={'/'}>
                         <Auth isAuth={isAuth}/>

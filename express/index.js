@@ -9,12 +9,12 @@ const port = 8080;
 
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
-app.use('/', express.static(path.resolve(__dirname, './../build')));
+//app.use('/', express.static(path.resolve(__dirname, './../build')));
 app.use('/Main', main);
 app.use('/tasks', tasks);
-app.get('*', (req,res) =>{
-    res.sendFile(path.resolve(__dirname,'./../build/index.html'));
-});
+// app.get('*', (req,res) =>{
+//     res.sendFile(path.resolve(__dirname,'./../build/index.html'));
+// });
 
 mongodb.connectDB();
 

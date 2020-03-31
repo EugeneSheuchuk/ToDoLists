@@ -21,6 +21,8 @@ class App extends React.Component {
     };
 
     componentDidMount = () => {
+        const isAuth = this.props.isAuth;
+        if (!isAuth) return;
         API.getDataById(APPID)
             .then(res => this.setState({lists: [...res.data]}))
             .catch(err => this.setState({isError: true, errorText: err.response.data}));

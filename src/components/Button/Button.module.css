@@ -16,3 +16,26 @@
 .taskButton {
     width: 100%;
 }
+
+.link_button {
+    margin: 0;
+    padding: 0;
+    border: none;
+    outline: none;
+    font-size: 20px;
+    font-weight: bold;
+    background-color: #d8e0ed;
+    color: #206624;
+    width: 50%;
+}
+.link_button:first-child {
+    text-align: left;
+}
+.link_button:last-child {
+    text-align: right;
+}
+
+.link_button:hover {
+    text-decoration: underline;
+    color: #579cb5;
+}
