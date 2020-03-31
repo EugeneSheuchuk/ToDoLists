@@ -9,12 +9,14 @@ class Auth extends React.Component {
         this.state = {
             email: '',
             pass: '',
-        };
+            errorEmail: '',
+            errorPass: '',
+        }
     };
     _onSignUp = () => {
         this.props.history.push('/registration');
     };
-    _onCHangeField = (e, type) => {
+    _onChangeField = (e, type) => {
         if (type === 'email') {
             this.setState({email: e.target.value});
         } else if (type === 'pass') {
@@ -22,8 +24,26 @@ class Auth extends React.Component {
         }
     };
     _sigIn = () => {
-        console.log(this.state);
-        this.setState({email:'', pass:''})
+        const error = {};
+        if (this.state.email.trim() === '') {
+            error.isError = true;
+            error.email = 'email field cannot be empty';
+        }
+        if (this.state.pass.trim() === '') {
+            error.isError = true;
+            error.pass = 'pass field cannot be empty';
+        }
+        if (!error.email) {
+                if (this.state.email.search(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/) !== 0) {
+                    error.isError = true;
+                    error.email = 'error in email field';
+                }
+        }
+        if (error.isError) {
+            this.setState({errorEmail: error.email, errorPass: error.pass});
+            return;
+        }
+        this.setState({email:'', pass:'', errorEmail:'', errorPass:''});
     };
 
     render() {
@@ -34,14 +54,15 @@ class Auth extends React.Component {
                 <div className={style.email}>
                     <label htmlFor="authEmail">Enter your email address:</label>
                     <input type='email' id='authEmail' value={this.state.email}
-                           onChange={(e) => this._onCHangeField(e, 'email')}/>
-                    <p className="error">The field cannot be empty</p>
+                           onChange={(e) => this._onChangeField(e, 'email')}
+                           placeholder={'example@example.com'}/>
+                    <p className="error">{this.state.errorEmail}</p>
                 </div>
                 <div className={style.pass}>
                     <label htmlFor="authPass">Enter your pass:</label>
                     <input type='password' id='authPass' value={this.state.pass}
-                           onChange={(e)=> this._onCHangeField(e, 'pass')}/>
-                    <p className="error">The field cannot be empty</p>
+                           onChange={(e)=> this._onChangeField(e, 'pass')}/>
+                    <p className="error">{this.state.errorPass}</p>
                 </div>
                 <div className={style.links}>
                     <Button value={'Sign up'}

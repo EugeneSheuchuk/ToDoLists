@@ -18,7 +18,7 @@
 }
 
 .link_button {
-    margin: 0;
+    margin: 10px 0 0 0;
     padding: 0;
     border: none;
     outline: none;
@@ -27,6 +27,7 @@
     background-color: #d8e0ed;
     color: #206624;
     width: 50%;
+    cursor: pointer;
 }
 .link_button:first-child {
     text-align: left;
@@ -36,6 +37,25 @@
 }
 
 .link_button:hover {
+    text-decoration: underline;
+    color: #579cb5;
+}
+
+.reg_button {
+    margin: 10px 0 0 0;
+    padding: 0;
+    border: none;
+    outline: none;
+    font-size: 20px;
+    font-weight: bold;
+    background-color: #d8e0ed;
+    color: #206624;
+    width: 100%;
+    text-align: right;
+    cursor: pointer;
+}
+
+.reg_button:hover {
     text-decoration: underline;
     color: #579cb5;
 }

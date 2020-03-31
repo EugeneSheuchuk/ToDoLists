@@ -6,15 +6,14 @@ class InputText extends React.Component {
     render() {
         const {
             imputId, imputValue, action,
-            focus = false, keyAction = null, blur = null, name
+            focus = false, keyAction = null, blur = null, name, type = null, placeholder = null
         } = this.props;
-
         return (
             <React.Fragment>
                 <input type="text"
                        id={imputId}
                        value={imputValue}
-                       onChange={(e) => action(e)}
+                       onChange={(e) => action(e, type)}
                        autoFocus={focus}
                        onKeyPress={(e) => {
                            if (keyAction) {
@@ -26,7 +25,8 @@ class InputText extends React.Component {
                                blur();
                            }
                        }}
-                       className={`${style[name]}`}/>
+                       className={`${style[name]}`}
+                       placeholder={placeholder}/>
             </React.Fragment>
         );
     }
