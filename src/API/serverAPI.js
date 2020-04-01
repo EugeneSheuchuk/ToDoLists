@@ -36,7 +36,7 @@ export const API = {
     isAuth() {
         return instance.get('auth/isAuth');
     },
-    registartionUser(name, surname, email, pass) {
-        return instance.post('auth/registartion', {name, surname, email, pass})
+    registartionUser(fields) {
+        return instance.post('auth/registartion', {...fields});
     }
 };

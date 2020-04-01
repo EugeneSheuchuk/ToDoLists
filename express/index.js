@@ -26,7 +26,18 @@ app.get('/auth/isAuth', (req, res) => {
 app.post('/auth/registartion', async (req, res) => {
     try{
         const user = {...req.body};
+        console.log('user', user);
+        const error = serverFunction.checkRequestFields(user);
+        if (error.isError) {
+            delete error.isError;
+            res.status(406).send(error);
+            return;
+        }
         user.email = user.email.toLocaleLowerCase();
+        const checkEmail = await mongodb.getUserId(user.email);
+        if (checkEmail) {
+            res.status(406).send({errorEmail: 'this email has been used'});
+        }
         const userOnDB = await mongodb.addUser(user);
         const hashEmail = fromString(userOnDB.email);
         serverFunction.setUserSession(hashEmail, userOnDB._id);

@@ -4,6 +4,7 @@ import Input from "../Input/Input";
 import {Redirect} from "react-router-dom";
 import Button from "../Button/Button";
 import {API} from "../../API/serverAPI";
+import {checkComponentFields} from "../../assets/functions";
 
 class Registration extends React.Component {
     constructor(props) {
@@ -39,40 +40,20 @@ class Registration extends React.Component {
         }
     };
     _sigUp = () => {
-        const error = {};
-        if (this.state.name.trim() === '') {
-            error.isError = true;
-            error.name = 'name field cannot be empty';
-        }
-        if (this.state.surname.trim() === '') {
-            error.isError = true;
-            error.surname = 'surname field cannot be empty';
-        }
-        if (this.state.email.trim() === '') {
-            error.isError = true;
-            error.email = 'email field cannot be empty';
-        }
-        if (this.state.pass.trim() === '') {
-            error.isError = true;
-            error.pass = 'pass field cannot be empty';
-        }
-        if (!error.email) {
-            if (this.state.email.search(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/) !== 0) {
-                error.isError = true;
-                error.email = 'error in email field';
-            }
-        }
+        const checkState = {
+            name: this.state.name,
+            surname: this.state.surname,
+            email: this.state.email,
+            pass: this.state.pass
+        };
+        const error = checkComponentFields(checkState);
         if (error.isError) {
-            this.setState({
-                errorName: error.name,
-                errorSurname: error.surname,
-                errorEmail: error.email,
-                errorPass: error.pass,
-            });
+             delete error.isError;
+            this.setState({...this.state, ...error});
             return;
         }
 
-        API.registartionUser(this.state.name, this.state.surname, this.state.email.toLocaleLowerCase(), this.state.pass)
+        API.registartionUser({...checkState})
             .then(res => {
                 this.setState({
                     name: '',
@@ -86,7 +67,7 @@ class Registration extends React.Component {
                 });
                 this.props.changeAuth(res.data);
             })
-            .catch(err => console.log('registratin err', err));
+            .catch(err => this.setState({...err.response.data}));
 
     };
 

@@ -34,6 +34,7 @@ module.exports = {
         }
     },
 
+
     getLists() {
         return List.find();
     },
