@@ -9,15 +9,15 @@
     background-color: #d8e0ed;
 }
 
-label {
+.reg_container label {
     display: block;
     font-size: 20px;
     margin-bottom: 5px;
 }
 
-input[type='email'],
-input[type='password'],
-input[type='text']{
+.reg_container input[type='email'],
+.reg_container input[type='password'],
+.reg_container input[type='text']{
     width: 100%;
     display: block;
     margin-bottom: 5px;
@@ -29,7 +29,7 @@ input[type='text']{
     outline: none;
 }
 
-p {
+.reg_container p {
     margin: 0;
     padding: 0 10px;
     line-height: 14px;

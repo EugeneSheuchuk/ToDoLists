@@ -11,6 +11,9 @@
     line-height: 20px;
     font-size: 18px;
     color: green;
+    margin-left: -7px;
+    border: 1px solid gray;
+    outline: none;
 }
 
 .taskButton {
@@ -58,4 +61,10 @@
 .reg_button:hover {
     text-decoration: underline;
     color: #579cb5;
+}
+.add_list_button {
+    margin: 0 0 0 -2px;
+    padding: 0 10px;
+    font-size: 20px;
+    color: green;
 }

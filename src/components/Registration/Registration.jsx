@@ -1,8 +1,9 @@
 import React from "react";
 import style from './Registration.module.css';
-import InputText from "../InputText/InputText";
+import Input from "../Input/Input";
 import {Redirect} from "react-router-dom";
 import Button from "../Button/Button";
+import {API} from "../../API/serverAPI";
 
 class Registration extends React.Component {
     constructor(props) {
@@ -32,6 +33,8 @@ class Registration extends React.Component {
                 break;
             case 'pass':
                 this.setState({pass: e.target.value});
+                break;
+            default:
                 break;
         }
     };
@@ -68,16 +71,23 @@ class Registration extends React.Component {
             });
             return;
         }
-        this.setState({
-            name: '',
-            surname: '',
-            email: '',
-            pass: '',
-            errorName: '',
-            errorSurname: '',
-            errorEmail: '',
-            errorPass: ''
-        });
+
+        API.registartionUser(this.state.name, this.state.surname, this.state.email.toLocaleLowerCase(), this.state.pass)
+            .then(res => {
+                this.setState({
+                    name: '',
+                    surname: '',
+                    email: '',
+                    pass: '',
+                    errorName: '',
+                    errorSurname: '',
+                    errorEmail: '',
+                    errorPass: ''
+                });
+                this.props.changeAuth(res.data);
+            })
+            .catch(err => console.log('registratin err', err));
+
     };
 
     render() {
@@ -87,33 +97,37 @@ class Registration extends React.Component {
             <div className={style.reg_container}>
                 <div className={style.name}>
                     <label htmlFor="regName">Enter your name</label>
-                    <InputText imputId={'regName'} value={this.state.name}
-                               action={this._onChangeField}
-                               type='name'
-                               placeholder='Bob'/>
+                    <Input imputId={'regName'} value={this.state.name}
+                           action={this._onChangeField}
+                           fieldType='name'
+                           placeholder='Bob'/>
                     <p>{this.state.errorName}</p>
                 </div>
                 <div className={style.surname}>
                     <label htmlFor="regSurname">Enter your surname</label>
-                    <InputText imputId={'regSurname'} value={this.state.surname}
-                               action={this._onChangeField}
-                               type='surname'
-                               placeholder='Stone'/>
+                    <Input imputId={'regSurname'} value={this.state.surname}
+                           action={this._onChangeField}
+                           fieldType='surname'
+                           placeholder='Stone'/>
                     <p>{this.state.errorSurname}</p>
                 </div>
                 <div className={style.email}>
                     <label htmlFor="regEmail">Enter your email address</label>
-                    <InputText imputId={'regEmail'} value={this.state.email}
-                               action={this._onChangeField}
-                               type='email'
-                               placeholder='example@example.com'/>
+                    <Input imputType={'email'}
+                           imputId={'regEmail'}
+                           value={this.state.email}
+                           action={this._onChangeField}
+                           fieldType='email'
+                           placeholder='example@example.com'/>
                     <p>{this.state.errorEmail}</p>
                 </div>
                 <div className={style.pass}>
                     <label htmlFor="regPass">Enter your pass</label>
-                    <InputText imputId={'regPass'} value={this.state.pass}
-                               action={this._onChangeField}
-                               type='pass'/>
+                    <Input imputType={'password'}
+                           imputId={'regPass'}
+                           value={this.state.pass}
+                           action={this._onChangeField}
+                           fieldType='pass'/>
                     <p>{this.state.errorPass}</p>
                 </div>
                 <Button value={'Sign up'}

@@ -4,6 +4,7 @@ import style from './Main.module.css';
 import Auth from "../Auth/Auth";
 import Registration from "../Registration/Registration";
 import App from "../App/App";
+import {API} from "../../API/serverAPI";
 
 class Main extends React.Component {
     constructor(props) {
@@ -12,6 +13,13 @@ class Main extends React.Component {
             isAuth: false,
         };
     }
+    componentDidMount() {
+        API.isAuth()
+            .then(res => this.setState(res.data))
+            .catch(err => console.log('Auth DidMount err',err))
+    }
+
+    _changeAuth = (isAuth) => this.setState({isAuth});
 
     render() {
         const isAuth = this.state.isAuth;
@@ -21,16 +29,16 @@ class Main extends React.Component {
                 <h1>The todo list -  application which help to save your time</h1>
                 <Switch>
                     <Route exact path={'/'}>
-                        <Auth isAuth={isAuth}/>
+                        <Auth isAuth={isAuth} changeAuth={this._changeAuth}/>
                     </Route>
                     <Route path={'/auth'}>
-                        <Auth isAuth={isAuth}/>
+                        <Auth isAuth={isAuth} changeAuth={this._changeAuth}/>
                     </Route>
                     <Route path={'/registration'}>
-                        <Registration isAuth={isAuth}/>
+                        <Registration isAuth={isAuth} changeAuth={this._changeAuth}/>
                     </Route>
                     <Route path={'/app'}>
-                        <App isAuth={isAuth}/>
+                        <App isAuth={isAuth} changeAuth={this._changeAuth}/>
                     </Route>
                 </Switch>
             </div>

@@ -2,7 +2,7 @@
     min-height: 50vh;
     min-width: 100vw;
 }
-h1 {
+.main_container > h1 {
  width: 100vw;
     text-align: center;
     margin-top: 25px;

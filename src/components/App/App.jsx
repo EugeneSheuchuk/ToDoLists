@@ -2,7 +2,7 @@ import React from 'react';
 import {Redirect} from "react-router-dom";
 import './App.css';
 import List from './../list/List'
-import InputText from "./../InputText/InputText";
+import Input from "../Input/Input";
 import Button from "./../Button/Button";
 import {API} from "./../../API/serverAPI";
 import Error from "./../Error/Error";
@@ -88,12 +88,15 @@ class App extends React.Component {
             <div className={'app_container'}>
                 <div>
                     <h1>Enter the name of list, please!</h1>
-                    <InputText imputValue={this.state.listName}
-                               action={this._onType}
-                               keyAction={this._onPressEnter}/>
-                    <Button value={'Add list'} action={this._onAddList}/>
+                    <Input imputValue={this.state.listName}
+                           action={this._onType}
+                           keyAction={this._onPressEnter}
+                           name={'add_list'}/>
+                    <Button value={'Add list'}
+                            action={this._onAddList}
+                            styleClass={'add_list_button'}/>
                 </div>
-                <div>
+                <div className={'app_lists_container'}>
                     {viewComponent}
                 </div>
             </div>

@@ -2,6 +2,8 @@ import React from "react";
 import style from './Auth.module.css';
 import {Redirect, withRouter} from "react-router-dom";
 import Button from "../Button/Button";
+import Input from "../Input/Input";
+import {API} from "../../API/serverAPI";
 
 class Auth extends React.Component {
     constructor(props) {
@@ -13,6 +15,7 @@ class Auth extends React.Component {
             errorPass: '',
         }
     };
+
     _onSignUp = () => {
         this.props.history.push('/registration');
     };
@@ -53,15 +56,21 @@ class Auth extends React.Component {
             <div className={style.auth_container}>
                 <div className={style.email}>
                     <label htmlFor="authEmail">Enter your email address:</label>
-                    <input type='email' id='authEmail' value={this.state.email}
-                           onChange={(e) => this._onChangeField(e, 'email')}
+                    <Input imputType={'email'}
+                           imputId={'authEmail'}
+                           value={this.state.email}
+                           action={this._onChangeField}
+                           fieldType={'email'}
                            placeholder={'example@example.com'}/>
                     <p className="error">{this.state.errorEmail}</p>
                 </div>
                 <div className={style.pass}>
                     <label htmlFor="authPass">Enter your pass:</label>
-                    <input type='password' id='authPass' value={this.state.pass}
-                           onChange={(e)=> this._onChangeField(e, 'pass')}/>
+                    <Input imputType={'password'}
+                           imputId={'authPass'}
+                           value={this.state.pass}
+                           action={this._onChangeField}
+                           fieldType={'pass'}/>
                     <p className="error">{this.state.errorPass}</p>
                 </div>
                 <div className={style.links}>

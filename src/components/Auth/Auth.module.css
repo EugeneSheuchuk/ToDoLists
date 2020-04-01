@@ -9,14 +9,14 @@
     background-color: #d8e0ed;
 }
 
-label {
+.auth_container label {
     display: block;
     font-size: 20px;
     margin-bottom: 5px;
 }
 
-input[type='email'],
-input[type='password'] {
+.auth_container input[type='email'],
+.auth_container input[type='password'] {
     width: 100%;
     display: block;
     margin-bottom: 5px;
@@ -28,7 +28,7 @@ input[type='password'] {
     outline: none;
 }
 
-p {
+.auth_container p {
     margin: 0;
     padding: 0 10px;
     line-height: 14px;

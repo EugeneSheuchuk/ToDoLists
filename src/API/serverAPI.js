@@ -32,5 +32,11 @@ export const API = {
     },
     deleteTask(id, listId, taskId) {
         return instance.delete(`tasks/${id}`, {data: {listId, taskId}});
+    },
+    isAuth() {
+        return instance.get('auth/isAuth');
+    },
+    registartionUser(name, surname, email, pass) {
+        return instance.post('auth/registartion', {name, surname, email, pass})
     }
 };

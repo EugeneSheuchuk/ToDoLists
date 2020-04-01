@@ -12,11 +12,11 @@ router.get('/:id', async (req, res) => {
     try {
         if (serverFunction.checkReqId(req)) {
             serverFunction.createUser(req.params.id);
-            const result = await mongodb.getData();
+            const result = await mongodb.getLists();
             res.send(result);
             return;
         }
-        const result = await mongodb.getData();
+        const result = await mongodb.getLists();
         res.send(result);
     } catch (e) {
         console.log('error in router main get /', e);
@@ -35,7 +35,7 @@ router.post('/:id', async (req, res) => {
         }
         const result = await mongodb.addList(req.body.listName);
         if (result) {
-            const lists = await mongodb.getData();
+            const lists = await mongodb.getLists();
             res.send(lists);
         } else {
             res.status(406).send("List was't add");
@@ -56,7 +56,7 @@ router.put('/:id', async (req, res) => {
         }
         const result = await mongodb.changeListName(req.body.listId, req.body.newListName);
         if (result) {
-            const lists = await mongodb.getData();
+            const lists = await mongodb.getLists();
             res.send(lists);
         } else {
             res.status(406).send("The name of list was't change");
@@ -74,7 +74,7 @@ router.delete('/:id', async (req, res) => {
         }
         const result = await mongodb.deleteList(req.body.listId);
         if (result) {
-            const lists = await mongodb.getData();
+            const lists = await mongodb.getLists();
             res.send(lists);
         } else {
             res.status(406).send("List was't delete");

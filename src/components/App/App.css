@@ -1,3 +1,13 @@
 .app_container {
-    padding: 20px 40px;
+    padding: 0 40px;
+}
+
+.app_container > div:first-child {
+    margin-bottom: 20px;
+}
+
+.app_lists_container {
+    width: 90vw;
+    margin: 0 auto;
+    text-align: center;
 }
