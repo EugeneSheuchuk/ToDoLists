@@ -1,20 +1,19 @@
 import React from "react";
-import style from './InputText.module.css';
+import style from './Input.module.css';
 
-class InputText extends React.Component {
+class Input extends React.Component {
 
     render() {
         const {
-            imputId, imputValue, action,
-            focus = false, keyAction = null, blur = null, name
+            imputType = 'text', imputId, imputValue, action,
+            focus = false, keyAction = null, blur = null, name, fieldType = null, placeholder = null
         } = this.props;
-
         return (
             <React.Fragment>
-                <input type="text"
+                <input type={imputType}
                        id={imputId}
                        value={imputValue}
-                       onChange={(e) => action(e)}
+                       onChange={(e) => action(e, fieldType)}
                        autoFocus={focus}
                        onKeyPress={(e) => {
                            if (keyAction) {
@@ -26,10 +25,11 @@ class InputText extends React.Component {
                                blur();
                            }
                        }}
-                       className={`${style[name]}`}/>
+                       className={`${style[name]}`}
+                       placeholder={placeholder}/>
             </React.Fragment>
         );
     }
 }
 
-export default InputText;
+export default Input;

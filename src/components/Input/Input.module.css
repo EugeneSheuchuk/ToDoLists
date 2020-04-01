@@ -1,0 +1,19 @@
+.taskInput {
+    margin: 0 5px;
+    padding: 0 10px;
+    width: 80%;
+    height: 26px;
+    line-height: 20px;
+    font-size: 20px;
+    border: 1px solid gray;
+}
+
+.add_list {
+    width: 30%;
+    display: inline-block;
+    line-height: 20px;
+    font-size: 20px;
+    color: #3f3535;
+    padding: 0 10px;
+    outline: none;
+}

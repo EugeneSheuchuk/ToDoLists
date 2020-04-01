@@ -1,7 +1,8 @@
 import * as axios from 'axios';
 
 const instance = axios.create({
-    baseURL: 'http://localhost:8080/'
+    baseURL: 'http://localhost:8080/',
+    withCredentials: true,
 });
 
 export const API = {
@@ -31,5 +32,11 @@ export const API = {
     },
     deleteTask(id, listId, taskId) {
         return instance.delete(`tasks/${id}`, {data: {listId, taskId}});
+    },
+    isAuth() {
+        return instance.get('auth/isAuth');
+    },
+    registartionUser(fields) {
+        return instance.post('auth/registartion', {...fields});
     }
 };

@@ -1,9 +1,22 @@
 .listContainer {
     display: inline-block;
-    width: 400px;
+    width: 500px;
     padding: 10px;
     vertical-align: top;
     margin-right: 20px;
+    margin-bottom: 20px;
+    border: 1px solid cornflowerblue;
+    border-radius: 10px;
+    background-color: #d8e0ed;
+    text-align: left;
+}
+
+.listContainer > input[type='text'] {
+    font-size: 1.5em;
+    margin-block-start: 0.82em;
+    margin-block-end: 0.81em;
+    margin-inline-start: 0;
+    margin-inline-end: 0;
 }
 
 .proposal {
@@ -24,6 +37,8 @@
     grid-template-rows: 1fr;
     grid-template-columns: 1fr 3fr 1fr 2fr;
     margin-bottom: 20px;
+    border: 1px solid cornflowerblue;
+    border-radius: 10px;
 }
 
 .taskItem {
@@ -31,7 +46,6 @@
     padding: 5px;
     text-align: center;
     min-height: 60px;
-    margin-bottom: 10px;
 }
 
 .taskText {
@@ -42,7 +56,9 @@
 .tasksFilter {
     text-align: center;
 }
+
 .deleteList {
     text-align: right;
 }
+
 

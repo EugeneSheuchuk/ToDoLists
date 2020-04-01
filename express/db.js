@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const List = require('./list');
 const Task = require('./task');
+const User = require('./user');
 
 const status = {
     complete: 'Complete',
@@ -9,15 +10,32 @@ const status = {
 
 module.exports = {
     connectDB() {
-        mongoose.connect('mongodb://localhost:27017/todolists',
+        return mongoose.connect('mongodb://localhost:27017/todolists',
             {
                 useNewUrlParser: true,
                 useUnifiedTopology: true
-            })
-            .then(() => console.log('mongoDB connected'))
-            .catch(err => console.log('mongoDB was not connect ', err));
+            });
     },
-    getData() {
+    async addUser(user) {
+        try {
+            const newUser = new User({
+                ...user,
+            });
+            return await newUser.save();
+        } catch (e) {
+            return false;
+        }
+    },
+    async getUserId(email) {
+        try {
+            return await User.findOne({email});
+        } catch (e) {
+            return false;
+        }
+    },
+
+
+    getLists() {
         return List.find();
     },
     async addList(listName) {

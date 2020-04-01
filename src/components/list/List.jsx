@@ -2,7 +2,7 @@ import React from 'react';
 import style from './List.module.css';
 import Button from "../Button/Button";
 import {filterArray} from "../../assets/functions";
-import InputText from "../InputText/InputText";
+import Input from "../Input/Input";
 import {API} from "../../API/serverAPI";
 import Error from "../Error/Error";
 
@@ -151,11 +151,11 @@ class List extends React.Component {
     render() {
         const {listName, listId, deleteList} = this.props;
         const listHeader = this.state.isEditHeader
-            ? <InputText imputValue={this.state.editListName}
-                         focus={true}
-                         action={this._onEditHeader}
-                         keyAction={this._onSaveHeader}
-                         blur={this._onSaveHeader}/>
+            ? <Input imputValue={this.state.editListName}
+                     focus={true}
+                     action={this._onEditHeader}
+                     keyAction={this._onSaveHeader}
+                     blur={this._onSaveHeader}/>
             : <h2 onDoubleClick={() => this._onStartEditListHeader(listName)}>{listName}</h2>;
 
 
@@ -167,11 +167,11 @@ class List extends React.Component {
                     <div className={`${style.taskText} ${style.taskItem}`}
                          onDoubleClick={(e) => this._onEditTask({e, taskId: item._id})}>
                         {item.isEdit
-                            ? <InputText imputValue={this.state.editField}
-                                         focus={true}
-                                         action={this._onEditText}
-                                         keyAction={this._onPressEnter}
-                                         blur={this._onBlurEditTask}/>
+                            ? <Input imputValue={this.state.editField}
+                                     focus={true}
+                                     action={this._onEditText}
+                                     keyAction={this._onPressEnter}
+                                     blur={this._onBlurEditTask}/>
                             : item.taskText}
                     </div>
                     <div className={`${style.taskStatus} ${style.taskItem}`}>{item.taskStatus}</div>
@@ -228,11 +228,11 @@ class List extends React.Component {
                 {listHeader}
                 <div className={style.proposal}>
                     <label htmlFor={`${listName}_${listId}`}>Enter your task, please!</label>
-                    <InputText imputId={`${listName}_${listId}`}
-                               imputValue={this.state.field}
-                               action={this._onTypeText}
-                               name={'taskInput'}
-                               keyAction={this._onPressEnterToAddTask}/>
+                    <Input imputId={`${listName}_${listId}`}
+                           imputValue={this.state.field}
+                           action={this._onTypeText}
+                           name={'taskInput'}
+                           keyAction={this._onPressEnterToAddTask}/>
                     <Button value={'Add'} action={this._onAddTask} styleClass='addTaskButton'/>
                 </div>
                 {viewComponent}

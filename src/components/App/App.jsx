@@ -1,10 +1,11 @@
 import React from 'react';
+import {Redirect} from "react-router-dom";
 import './App.css';
-import List from './components/list/List'
-import InputText from "./components/InputText/InputText";
-import Button from "./components/Button/Button";
-import {API} from "./API/serverAPI";
-import Error from "./components/Error/Error";
+import List from './../list/List'
+import Input from "../Input/Input";
+import Button from "./../Button/Button";
+import {API} from "./../../API/serverAPI";
+import Error from "./../Error/Error";
 
 const APPID = 'toDoLists';
 
@@ -20,6 +21,8 @@ class App extends React.Component {
     };
 
     componentDidMount = () => {
+        const isAuth = this.props.isAuth;
+        if (!isAuth) return;
         API.getDataById(APPID)
             .then(res => this.setState({lists: [...res.data]}))
             .catch(err => this.setState({isError: true, errorText: err.response.data}));
@@ -67,6 +70,9 @@ class App extends React.Component {
     };
 
     render() {
+        const isAuth = this.props.isAuth;
+        if (!isAuth) return <Redirect to={'/auth'}/>;
+
         const displayLists = this.state.lists.map(item => <List listName={item.listName}
                                                                 listId={item._id}
                                                                 key={`key-${item._id}`}
@@ -82,12 +88,15 @@ class App extends React.Component {
             <div className={'app_container'}>
                 <div>
                     <h1>Enter the name of list, please!</h1>
-                    <InputText imputValue={this.state.listName}
-                               action={this._onType}
-                               keyAction={this._onPressEnter}/>
-                    <Button value={'Add list'} action={this._onAddList}/>
+                    <Input imputValue={this.state.listName}
+                           action={this._onType}
+                           keyAction={this._onPressEnter}
+                           name={'add_list'}/>
+                    <Button value={'Add list'}
+                            action={this._onAddList}
+                            styleClass={'add_list_button'}/>
                 </div>
-                <div>
+                <div className={'app_lists_container'}>
                     {viewComponent}
                 </div>
             </div>
