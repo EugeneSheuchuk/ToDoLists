@@ -24,11 +24,11 @@ export const API = {
     addNewTask(task) {
         return instance.post('tasks', {task});
     },
-    changeTaskStatus(id, listId, taskId, currentStatus) {
-        return instance.put(`tasks/${id}`, {listId, taskId, currentStatus});
+    changeTaskStatus(listId, taskId, currentStatus) {
+        return instance.put('tasks', {listId, taskId, currentStatus});
     },
-    changeTask(id, listId, taskId, newTaskText) {
-        return instance.put(`tasks/editTask/${id}`, {listId, taskId, newTaskText});
+    changeTask(listId, taskId, newTaskText) {
+        return instance.put('tasks/editTask', {listId, taskId, newTaskText});
     },
     deleteTask(listId, taskId) {
         return instance.delete('tasks', {data: {listId, taskId}});
@@ -36,7 +36,7 @@ export const API = {
     isAuth() {
         return instance.get('auth/isAuth');
     },
-    auth(fields){
+    auth(fields) {
         return instance.post('auth/auth', {...fields});
     },
     registartionUser(fields) {

@@ -23,6 +23,7 @@ class List extends React.Component {
             field: '',
             tasks: [],
             taskView: taskView.all,
+            prevTextTask: '',
             editField: '',
             editItemId: null,
             prevListName: '',
@@ -71,9 +72,12 @@ class List extends React.Component {
 
     _onChangeTaskStatus = ({e, itemId: taskId, data: currentStatus}) => {
         e.preventDefault();
-        const {appId, listId} = this.props;
-        API.changeTaskStatus(appId, listId, taskId, currentStatus)
-            .then(res => this.setState({tasks: [...res.data]}))
+        const {listId} = this.props;
+        API.changeTaskStatus(listId, taskId, currentStatus)
+            .then(res => {
+                if (!res.data.isAuth) return this.props.changeAuth({isAuth: res.data.isAuth});
+                this.setState({tasks: [...res.data.data]})
+            })
             .catch(err => this.setState({isError: true, errorText: err.response.data}));
     };
 
@@ -92,7 +96,7 @@ class List extends React.Component {
                 editField = item.taskText;
             }
         });
-        this.setState({tasks: tasksList, editField, editItemId: taskId});
+        this.setState({tasks: tasksList, editField, prevTextTask: editField, editItemId: taskId});
     };
 
     _onEditText = (e) => {
@@ -101,13 +105,26 @@ class List extends React.Component {
     };
 
     _onSaveEditTask = () => {
-        const {appId, listId} = this.props;
+        const {listId} = this.props;
         if (this.state.editField.trim() === '') {
             this.setState({isError: true, errorText: 'The task text field cannot be empty'});
             return;
         }
-        API.changeTask(appId, listId, this.state.editItemId, this.state.editField)
-            .then(res => this.setState({editField: '', editItemId: null, tasks: [...res.data]}))
+        if (this.state.prevTextTask === this.state.editField.trim()) {
+            const tasksList = [...this.state.tasks];
+            tasksList.forEach(item => {
+                if (item._id === this.state.editItemId) {
+                    item.isEdit = !item.isEdit;
+                }
+            });
+            this.setState({tasks: tasksList, editField: '', prevTextTask: '', editItemId: ''});
+            return;
+        }
+        API.changeTask(listId, this.state.editItemId, this.state.editField)
+            .then(res => {
+                if (!res.data.isAuth) return this.props.changeAuth({isAuth: res.data.isAuth});
+                this.setState({editField: '', prevTextTask: '', editItemId: null, tasks: [...res.data.data]});
+            })
             .catch(err => this.setState({isError: true, errorText: err.response.data}));
     };
 

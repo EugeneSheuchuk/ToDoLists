@@ -34,7 +34,7 @@ router.post('/auth', async (req, res) => {
         }
         const hashEmail = fromString(checkUser.email);
         serverFunction.setUserSession(hashEmail, checkUser._id);
-        res.cookie('todoList', hashEmail, {path: '/', expires: new Date(Date.now() + 900000)}).send({isAuth: true});
+        res.cookie('todoList', hashEmail, {path: '/', expires: new Date(Date.now() + 2592000)}).send({isAuth: true});
 
     } catch (e) {
         res.status(500).send(e);
@@ -57,7 +57,7 @@ router.post('/registartion', async (req, res) => {
         const userOnDB = await mongodb.addUser(user);
         const hashEmail = fromString(userOnDB.email);
         serverFunction.setUserSession(hashEmail, userOnDB._id);
-        res.cookie('todoList', hashEmail, {path: '/', expires: new Date(Date.now() + 900000)}).send({isAuth: true});
+        res.cookie('todoList', hashEmail, {path: '/', expires: new Date(Date.now() + 2592000)}).send({isAuth: true});
     } catch (e) {
         res.status(500).send(e);
     }

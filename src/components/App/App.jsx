@@ -101,7 +101,7 @@ class App extends React.Component {
         return (
             <div className={'app_container'}>
                 <div>
-                    <h1>Enter the name of list, please!</h1>
+                    <h1>Enter the name of new list, please!</h1>
                     <Input imputValue={this.state.listName}
                            action={this._onType}
                            keyAction={this._onPressEnter}

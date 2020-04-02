@@ -42,16 +42,16 @@ router.post('/', async (req, res) => {
         res.status(500).send(e);
     }
 });
-router.put('/:id', async (req, res) => {
+router.put('/', async (req, res) => {
     try {
-        if (serverFunction.checkReqId(req)) {
-            res.status(406).send("You are not authorised");
+        if (!serverFunction.isUserAuth(req.cookies)) {
+            res.send({isAuth: false});
             return;
         }
         const result = await mongodb.changeTaskStatus(req.body.taskId, req.body.currentStatus);
         if (result) {
             const tasks = await mongodb.getListTasks(req.body.listId);
-            res.send(tasks);
+            res.send({isAuth: true, data: tasks});
         } else {
             res.status(406).send("The task status was't change");
         }
@@ -59,10 +59,10 @@ router.put('/:id', async (req, res) => {
         res.status(500).send(e);
     }
 });
-router.put('/editTask/:id', async (req, res) => {
+router.put('/editTask', async (req, res) => {
     try {
-        if (serverFunction.checkReqId(req)) {
-            res.status(406).send("You are not authorised");
+        if (!serverFunction.isUserAuth(req.cookies)) {
+            res.send({isAuth: false});
             return;
         }
         if (req.body.newTaskText.trim() === '') {
@@ -72,7 +72,7 @@ router.put('/editTask/:id', async (req, res) => {
         const result = await mongodb.changeTaskText(req.body.taskId, req.body.newTaskText);
         if (result) {
             const tasks = await mongodb.getListTasks(req.body.listId);
-            res.send(tasks);
+            res.send({isAuth: true, data: tasks});
         } else {
             res.status(406).send("The task text was't change");
         }
