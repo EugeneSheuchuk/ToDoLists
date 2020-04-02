@@ -45,5 +45,6 @@ module.exports = {
     checkReqId,
     isUserAuth,
     setUserSession,
-    checkRequestFields
+    checkRequestFields,
+    sessionStorage
 };

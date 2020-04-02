@@ -16,15 +16,18 @@ class App extends React.Component {
             listName: '',
             lists: [],
             isError: false,
-            errorText: ''
+            errorText: '',
         };
     };
 
     componentDidMount = () => {
         const isAuth = this.props.isAuth;
         if (!isAuth) return;
-        API.getDataById(APPID)
-            .then(res => this.setState({lists: [...res.data]}))
+        API.getUserLists()
+            .then(res => {
+                if (!res.data.isAuth) return this.props.changeAuth({isAuth: res.data.isAuth});
+                this.setState({lists: [...res.data.data]});
+            })
             .catch(err => this.setState({isError: true, errorText: err.response.data}));
     };
 
@@ -38,8 +41,11 @@ class App extends React.Component {
             this.setState({isError: true, errorText: 'The field cannot be empty'});
             return;
         }
-        API.addList(APPID, this.state.listName)
-            .then(res => this.setState({lists: [...res.data], listName: ''}))
+        API.addList(this.state.listName)
+            .then(res => {
+                if (!res.data.isAuth) return this.props.changeAuth({isAuth: res.data.isAuth});
+                this.setState({lists: [...res.data.data], listName: ''})
+            })
             .catch(err => this.setState({isError: true, errorText: err.response.data}));
     };
 
@@ -50,8 +56,11 @@ class App extends React.Component {
     };
 
     _onDeleteList = ({itemId: listId}) => {
-        API.deleteList(APPID, listId)
-            .then(res => this.setState({lists: [...res.data]}))
+        API.deleteList(listId)
+            .then(res => {
+                if (!res.data.isAuth) return this.props.changeAuth({isAuth: res.data.isAuth});
+                this.setState({lists: [...res.data.data]});
+            })
             .catch(err => this.setState({isError: true, errorText: err.response.data}));
     };
 
@@ -70,7 +79,7 @@ class App extends React.Component {
     };
 
     render() {
-        const isAuth = this.props.isAuth;
+        const isAuth = this.props.isAuth.isAuth;
         if (!isAuth) return <Redirect to={'/auth'}/>;
 
         const displayLists = this.state.lists.map(item => <List listName={item.listName}

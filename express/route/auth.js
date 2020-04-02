@@ -9,7 +9,6 @@ router.use((req, res, next) => {
     next();
 });
 router.get('/isAuth', (req, res) => {
-    console.log('/auth isAyth', serverFunction.isUserAuth(req.cookies));
     if (serverFunction.isUserAuth(req.cookies)) {
         res.send({isAuth: true});
     } else {

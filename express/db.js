@@ -33,13 +33,14 @@ module.exports = {
             return false;
         }
     },
-    getLists() {
-        return List.find();
+    getLists(userId) {
+        return List.find({userId});
     },
-    async addList(listName) {
+    async addList(listName, userId) {
         try {
             const newList = new List({
-                listName
+                listName,
+                userId
             });
             await newList.save();
             return true;

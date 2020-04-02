@@ -6,14 +6,14 @@ const instance = axios.create({
 });
 
 export const API = {
-    getDataById(id) {
-        return instance.get(`main/${id}`);
+    getUserLists() {
+        return instance.get('main');
     },
-    addList(id, listName) {
-        return instance.post(`main/${id}`, {listName});
+    addList(listName) {
+        return instance.post('main', {listName});
     },
-    deleteList(id, listId) {
-        return instance.delete(`main/${id}`, {data: {listId}});
+    deleteList(listId) {
+        return instance.delete('main', {data: {listId}});
     },
     updateListName(id, listId, newListName) {
         return instance.put(`main/${id}`, {listId, newListName})
