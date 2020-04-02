@@ -33,8 +33,6 @@ module.exports = {
             return false;
         }
     },
-
-
     getLists() {
         return List.find();
     },

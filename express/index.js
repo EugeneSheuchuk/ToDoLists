@@ -23,10 +23,34 @@ app.get('/auth/isAuth', (req, res) => {
         res.send({isAuth: false});
     }
 });
+app.post('/auth', async (req, res) => {
+    try {
+        const user = {...req.body};
+        const error = serverFunction.checkRequestFields(user);
+        if (error.isError) {
+            delete error.isError;
+            res.status(406).send(error);
+            return;
+        }
+        user.email = user.email.toLocaleLowerCase();
+        const checkUser = await mongodb.getUserId(user.email);
+        if (!checkUser) {
+            res.status(406).send({errorEmail: 'error in email or such email does not exist'});
+        }
+        if (checkUser.pass !== user.pass) {
+            res.status(406).send({errorPass: 'the password is not valid'});
+        }
+        const hashEmail = fromString(checkUser.email);
+        serverFunction.setUserSession(hashEmail, checkUser._id);
+        res.cookie('todoList', hashEmail, {path: '/', expires: new Date(Date.now() + 900000)}).send({isAuth: true});
+
+    } catch (e) {
+
+    }
+});
 app.post('/auth/registartion', async (req, res) => {
     try{
         const user = {...req.body};
-        console.log('user', user);
         const error = serverFunction.checkRequestFields(user);
         if (error.isError) {
             delete error.isError;

@@ -4,6 +4,7 @@ import {Redirect, withRouter} from "react-router-dom";
 import Button from "../Button/Button";
 import Input from "../Input/Input";
 import {API} from "../../API/serverAPI";
+import {checkComponentFields} from "../../assets/functions";
 
 class Auth extends React.Component {
     constructor(props) {
@@ -19,6 +20,7 @@ class Auth extends React.Component {
     _onSignUp = () => {
         this.props.history.push('/registration');
     };
+
     _onChangeField = (e, type) => {
         if (type === 'email') {
             this.setState({email: e.target.value});
@@ -27,26 +29,19 @@ class Auth extends React.Component {
         }
     };
     _sigIn = () => {
-        const error = {};
-        if (this.state.email.trim() === '') {
-            error.isError = true;
-            error.email = 'email field cannot be empty';
-        }
-        if (this.state.pass.trim() === '') {
-            error.isError = true;
-            error.pass = 'pass field cannot be empty';
-        }
-        if (!error.email) {
-                if (this.state.email.search(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/) !== 0) {
-                    error.isError = true;
-                    error.email = 'error in email field';
-                }
-        }
+        const checkState = {
+            email: this.state.email,
+            pass: this.state.pass
+        };
+        const error = checkComponentFields(checkState);
         if (error.isError) {
-            this.setState({errorEmail: error.email, errorPass: error.pass});
+            delete error.isError;
+            this.setState({...error});
             return;
         }
-        this.setState({email:'', pass:'', errorEmail:'', errorPass:''});
+        API.auth(checkState)
+            .then(res => this.props.changeAuth(res.data))
+            .catch(err => this.setState({errorEmail: '', errorPass: '', ...err.response.data}));
     };
 
     render() {
