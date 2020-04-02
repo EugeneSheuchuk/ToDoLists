@@ -37,7 +37,7 @@ export const API = {
         return instance.get('auth/isAuth');
     },
     auth(fields){
-        return instance.post('auth', {...fields});
+        return instance.post('auth/auth', {...fields});
     },
     registartionUser(fields) {
         return instance.post('auth/registartion', {...fields});
