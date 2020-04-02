@@ -11,20 +11,20 @@ router.use((req, res, next) => {
 
 router.get('/', async (req, res) => {
     try {
-        if (serverFunction.checkReqId(req)) {
-            res.status(406).send("You are not authorised");
+        if (!serverFunction.isUserAuth(req.cookies)) {
+            res.send({isAuth: false});
             return;
         }
         const tasks = await mongodb.getListTasks(req.query.listId);
-        res.send(tasks);
+        res.send({isAuth: true, data: tasks});
     } catch (e) {
-        res.status(406).send(e);
+        res.status(500).send(e);
     }
 });
-router.post('/:id', async (req, res) => {
+router.post('/', async (req, res) => {
     try {
-        if (serverFunction.checkReqId(req)) {
-            res.status(406).send("You are not authorised");
+        if (!serverFunction.isUserAuth(req.cookies)) {
+            res.send({isAuth: false});
             return;
         }
         if (req.body.task.taskText.trim() === '') {
@@ -34,12 +34,12 @@ router.post('/:id', async (req, res) => {
         const result = await mongodb.addTask(req.body.task);
         if (result) {
             const tasks = await mongodb.getListTasks(req.body.task.listId);
-            res.send(tasks);
+            res.send({isAuth: true, data: tasks});
         } else {
             res.status(406).send("The task was't add");
         }
     } catch (e) {
-        res.status(406).send(e);
+        res.status(500).send(e);
     }
 });
 router.put('/:id', async (req, res) => {
@@ -56,7 +56,7 @@ router.put('/:id', async (req, res) => {
             res.status(406).send("The task status was't change");
         }
     } catch (e) {
-        res.status(406).send(e);
+        res.status(500).send(e);
     }
 });
 router.put('/editTask/:id', async (req, res) => {
@@ -77,24 +77,24 @@ router.put('/editTask/:id', async (req, res) => {
             res.status(406).send("The task text was't change");
         }
     } catch (e) {
-        res.status(406).send(e);
+        res.status(500).send(e);
     }
 });
-router.delete('/:id', async (req, res) => {
+router.delete('/', async (req, res) => {
     try {
-        if (serverFunction.checkReqId(req)) {
-            res.status(406).send("You are not authorised");
+        if (!serverFunction.isUserAuth(req.cookies)) {
+            res.send({isAuth: false});
             return;
         }
         const result = await mongodb.deleteTask(req.body.taskId);
         if (result) {
             const tasks = await mongodb.getListTasks(req.body.listId);
-            res.send(tasks);
+            res.send({isAuth: true, data: tasks});
         } else {
             res.status(406).send("The task was't delete");
         }
     } catch (e) {
-        res.status(406).send(e);
+        res.status(500).send(e);
     }
 });
 

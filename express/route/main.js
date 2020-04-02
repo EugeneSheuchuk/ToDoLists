@@ -17,7 +17,7 @@ router.get('/', async (req, res) => {
         const lists = await mongodb.getLists(serverFunction.sessionStorage[req.cookies.todoList]);
         res.send({isAuth: true, data: lists});
     } catch (e) {
-        console.log('error in router main get /', e);
+        res.status(500).send(e);
     }
 });
 
@@ -40,7 +40,7 @@ router.post('/', async (req, res) => {
             res.status(406).send("List was't add");
         }
     } catch (e) {
-        console.log('error in router main post /', e);
+        res.status(500).send(e);
     }
 });
 router.put('/', async (req, res) => {
@@ -62,7 +62,7 @@ router.put('/', async (req, res) => {
             res.status(406).send("The name of list was't change");
         }
     } catch (e) {
-        console.log('error in router main put /', e);
+        res.status(500).send(e);
     }
 });
 
@@ -81,7 +81,7 @@ router.delete('/', async (req, res) => {
             res.status(406).send("List was't delete");
         }
     } catch (e) {
-        console.log('error in router main delete /', e);
+        res.status(500).send(e);
     }
 });
 

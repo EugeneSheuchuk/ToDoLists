@@ -34,9 +34,12 @@ class List extends React.Component {
     };
 
     componentDidMount = () => {
-        const {appId, listId} = this.props;
-        API.getListTasks(appId, listId)
-            .then(res => this.setState({tasks: [...res.data]}))
+        const {listId} = this.props;
+        API.getListTasks(listId)
+            .then(res => {
+                if (!res.data.isAuth) return this.props.changeAuth({isAuth: res.data.isAuth});
+                this.setState({tasks: [...res.data.data]});
+            })
             .catch(err => this.setState({isError: true, errorText: err.response.data}));
     };
 
@@ -47,7 +50,7 @@ class List extends React.Component {
 
     _onAddTask = ({e}) => {
         e.preventDefault();
-        const {appId, listId} = this.props;
+        const {listId} = this.props;
         if (this.state.field.trim() === '') {
             this.setState({isError: true, errorText: 'The field cannot be empty'});
             return;
@@ -58,8 +61,11 @@ class List extends React.Component {
             isEdit: false,
             listId,
         };
-        API.addNewTask(appId, task)
-            .then(res => this.setState({field: '', tasks: [...res.data]}))
+        API.addNewTask(task)
+            .then(res => {
+                if (!res.data.isAuth) return this.props.changeAuth({isAuth: res.data.isAuth});
+                this.setState({field: '', tasks: [...res.data.data]})
+            })
             .catch(err => this.setState({isError: true, errorText: err.response.data}));
     };
 
@@ -123,15 +129,20 @@ class List extends React.Component {
 
     _onDeleteTask = ({e, itemId: taskId}) => {
         e.preventDefault();
-        const {appId, listId} = this.props;
-        API.deleteTask(appId, listId, taskId)
-            .then(res => this.setState({tasks: [...res.data]}))
+        const {listId} = this.props;
+        API.deleteTask(listId, taskId)
+            .then(res => {
+                if (!res.data.isAuth) return this.props.changeAuth({isAuth: res.data.isAuth});
+                this.setState({tasks: [...res.data.data]})
+            })
             .catch(err => this.setState({isError: true, errorText: err.response.data}));
     };
 
     _onStartEditListHeader = (currentName) => {
-        this.setState({isEditHeader: !this.state.isEditHeader,
-            editListName: currentName, prevListName: currentName});
+        this.setState({
+            isEditHeader: !this.state.isEditHeader,
+            editListName: currentName, prevListName: currentName
+        });
     };
 
     _onEditHeader = (e) => {
@@ -142,7 +153,7 @@ class List extends React.Component {
     _onSaveHeader = (e) => {
         if (e === undefined || e.key === 'Enter') {
             this.props.editListName(this.props.listId, this.state.editListName, this.state.prevListName);
-            this.setState({editListName: '', isEditHeader: !this.state.isEditHeader, prevListName:''});
+            this.setState({editListName: '', isEditHeader: !this.state.isEditHeader, prevListName: ''});
         }
     };
 

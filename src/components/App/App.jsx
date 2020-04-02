@@ -92,7 +92,8 @@ class App extends React.Component {
                                                                 deleteList={this._onDeleteList}
                                                                 editListName={this._onSaveNewListName}
                                                                 taskView={item.taskView}
-                                                                appId={APPID}/>);
+                                                                appId={APPID}
+                                                                changeAuth={this.props.changeAuth}/>);
         const viewComponent = this.state.isError
             ? <Error errorText={this.state.errorText} errorReset={this._onResetError}/>
             : displayLists;

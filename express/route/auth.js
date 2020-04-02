@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const serverFunction = require('./../serverFunctions');
 const mongodb = require('./../db');
-const { fromString } = require('uuidv4');
+const {fromString} = require('uuidv4');
 
 router.use((req, res, next) => {
     console.log('Auth route: ', Date.now());
@@ -37,11 +37,11 @@ router.post('/auth', async (req, res) => {
         res.cookie('todoList', hashEmail, {path: '/', expires: new Date(Date.now() + 900000)}).send({isAuth: true});
 
     } catch (e) {
-
+        res.status(500).send(e);
     }
 });
 router.post('/registartion', async (req, res) => {
-    try{
+    try {
         const user = {...req.body};
         const error = serverFunction.checkRequestFields(user);
         if (error.isError) {
@@ -59,7 +59,7 @@ router.post('/registartion', async (req, res) => {
         serverFunction.setUserSession(hashEmail, userOnDB._id);
         res.cookie('todoList', hashEmail, {path: '/', expires: new Date(Date.now() + 900000)}).send({isAuth: true});
     } catch (e) {
-        console.log('error in router auth post /', e);
+        res.status(500).send(e);
     }
 });
 
