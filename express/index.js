@@ -7,7 +7,10 @@ const tasks = require('./route/tasks');
 const mongodb = require('./db');
 
 const app = express();
-const port = 8080;
+let port = process.env.PORT;
+if(port == null || port == ''){
+    port = 8000;
+}
 
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
