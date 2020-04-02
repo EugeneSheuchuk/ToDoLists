@@ -48,31 +48,22 @@ class Registration extends React.Component {
         };
         const error = checkComponentFields(checkState);
         if (error.isError) {
-             delete error.isError;
-            this.setState({...this.state, ...error});
+            delete error.isError;
+            this.setState({...error});
             return;
         }
 
-        API.registartionUser({...checkState})
-            .then(res => {
-                this.setState({
-                    name: '',
-                    surname: '',
-                    email: '',
-                    pass: '',
-                    errorName: '',
-                    errorSurname: '',
-                    errorEmail: '',
-                    errorPass: ''
-                });
-                this.props.changeAuth(res.data);
-            })
-            .catch(err => this.setState({...err.response.data}));
+        API.registartionUser(checkState)
+            .then(res => this.props.changeAuth(res.data))
+            .catch(err => this.setState({
+                errorName: '', errorSurname: '', errorEmail: '', errorPass: '',
+                ...err.response.data
+            }));
 
     };
 
     render() {
-        const isAuth = this.props.isAuth;
+        const isAuth = this.props.isAuth.isAuth;
         if (isAuth) return <Redirect to={'/app'}/>;
         return (
             <div className={style.reg_container}>

@@ -13,10 +13,11 @@ class Main extends React.Component {
             isAuth: false,
         };
     }
+
     componentDidMount() {
         API.isAuth()
             .then(res => this.setState(res.data))
-            .catch(err => console.log('Auth DidMount err',err))
+            .catch(err => console.log('Auth DidMount err', err))
     }
 
     _changeAuth = (isAuth) => this.setState({isAuth});
@@ -26,7 +27,7 @@ class Main extends React.Component {
 
         return (
             <div className={style.main_container}>
-                <h1>The todo list -  application which help to save your time</h1>
+                <h1>The todo list - application which help to save your time</h1>
                 <Switch>
                     <Route exact path={'/'}>
                         <Auth isAuth={isAuth} changeAuth={this._changeAuth}/>

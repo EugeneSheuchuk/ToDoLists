@@ -9,8 +9,15 @@ const status = {
 };
 
 module.exports = {
-    connectDB() {
+    connectDBOffline() {
         return mongoose.connect('mongodb://localhost:27017/todolists',
+            {
+                useNewUrlParser: true,
+                useUnifiedTopology: true
+            });
+    },
+    connectDBOnline() {
+        return mongoose.connect('mongodb+srv://ToDoListUser:ToDoListUser@todolistproject-pjhmb.mongodb.net/test?retryWrites=true&w=majority',
             {
                 useNewUrlParser: true,
                 useUnifiedTopology: true
@@ -33,15 +40,14 @@ module.exports = {
             return false;
         }
     },
-
-
-    getLists() {
-        return List.find();
+    getLists(userId) {
+        return List.find({userId});
     },
-    async addList(listName) {
+    async addList(listName, userId) {
         try {
             const newList = new List({
-                listName
+                listName,
+                userId
             });
             await newList.save();
             return true;

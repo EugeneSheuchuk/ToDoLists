@@ -8,79 +8,80 @@ router.use((req, res, next) => {
     next();
 });
 
-router.get('/:id', async (req, res) => {
+router.get('/', async (req, res) => {
     try {
-        if (serverFunction.checkReqId(req)) {
-            serverFunction.createUser(req.params.id);
-            const result = await mongodb.getLists();
-            res.send(result);
+        if (!serverFunction.isUserAuth(req.cookies)) {
+            res.send({isAuth: false});
             return;
         }
-        const result = await mongodb.getLists();
-        res.send(result);
+        const lists = await mongodb.getLists(serverFunction.sessionStorage[req.cookies.todoList]);
+        res.send({isAuth: true, data: lists});
     } catch (e) {
-        console.log('error in router main get /', e);
+        res.status(500).send(e);
     }
 });
 
-router.post('/:id', async (req, res) => {
+router.post('/', async (req, res) => {
     try {
-        if (serverFunction.checkReqId(req)) {
-            res.send("List was't add");
+        if (!serverFunction.isUserAuth(req.cookies)) {
+            res.send({isAuth: false});
             return;
         }
         if (req.body.listName.trim() === '') {
             res.status(406).send("Can't create list without name");
             return;
         }
-        const result = await mongodb.addList(req.body.listName);
+        const userId = serverFunction.sessionStorage[req.cookies.todoList];
+        const result = await mongodb.addList(req.body.listName, userId);
         if (result) {
-            const lists = await mongodb.getLists();
-            res.send(lists);
+            const lists = await mongodb.getLists(userId);
+            res.send({isAuth: true, data: lists});
         } else {
             res.status(406).send("List was't add");
         }
     } catch (e) {
-        console.log('error in router main post /', e);
+        res.status(500).send(e);
     }
 });
-router.put('/:id', async (req, res) => {
+router.put('/', async (req, res) => {
     try {
-        if (serverFunction.checkReqId(req)) {
-            res.send("The name of list was't change");
+        if (!serverFunction.isUserAuth(req.cookies)) {
+            res.send({isAuth: false});
             return;
         }
         if (req.body.newListName.trim() === '') {
             res.status(406).send("Can't change to empty list name");
             return;
         }
+        const userId = serverFunction.sessionStorage[req.cookies.todoList];
         const result = await mongodb.changeListName(req.body.listId, req.body.newListName);
         if (result) {
-            const lists = await mongodb.getLists();
-            res.send(lists);
+            const lists = await mongodb.getLists(userId);
+            res.send({isAuth: true, data: lists});
         } else {
             res.status(406).send("The name of list was't change");
         }
     } catch (e) {
-        console.log('error in router main put /', e);
+        res.status(500).send(e);
     }
 });
 
-router.delete('/:id', async (req, res) => {
+router.delete('/', async (req, res) => {
     try {
-        if (serverFunction.checkReqId(req)) {
-            res.send("List was't delete");
+        if (!serverFunction.isUserAuth(req.cookies)) {
+            res.send({isAuth: false});
             return;
         }
         const result = await mongodb.deleteList(req.body.listId);
         if (result) {
-            const lists = await mongodb.getLists();
-            res.send(lists);
+            const userId = serverFunction.sessionStorage[req.cookies.todoList];
+            const lists = await mongodb.getLists(userId);
+            res.send({isAuth: true, data: lists});
         } else {
             res.status(406).send("List was't delete");
         }
     } catch (e) {
-        console.log('error in router main delete /', e);
+        res.status(500).send(e);
     }
 });
 

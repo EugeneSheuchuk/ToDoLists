@@ -6,35 +6,38 @@ const instance = axios.create({
 });
 
 export const API = {
-    getDataById(id) {
-        return instance.get(`main/${id}`);
+    getUserLists() {
+        return instance.get('main');
     },
-    addList(id, listName) {
-        return instance.post(`main/${id}`, {listName});
+    addList(listName) {
+        return instance.post('main', {listName});
     },
-    deleteList(id, listId) {
-        return instance.delete(`main/${id}`, {data: {listId}});
+    deleteList(listId) {
+        return instance.delete('main', {data: {listId}});
     },
-    updateListName(id, listId, newListName) {
-        return instance.put(`main/${id}`, {listId, newListName})
+    updateListName(listId, newListName) {
+        return instance.put('main', {listId, newListName})
     },
-    getListTasks(id, listId) {
-        return instance.get('tasks', {params: {id, listId}});
+    getListTasks(listId) {
+        return instance.get('tasks', {params: {listId}});
     },
-    addNewTask(id, task) {
-        return instance.post(`tasks/${id}`, {task});
+    addNewTask(task) {
+        return instance.post('tasks', {task});
     },
-    changeTaskStatus(id, listId, taskId, currentStatus) {
-        return instance.put(`tasks/${id}`, {listId, taskId, currentStatus});
+    changeTaskStatus(listId, taskId, currentStatus) {
+        return instance.put('tasks', {listId, taskId, currentStatus});
     },
-    changeTask(id, listId, taskId, newTaskText) {
-        return instance.put(`tasks/editTask/${id}`, {listId, taskId, newTaskText});
+    changeTask(listId, taskId, newTaskText) {
+        return instance.put('tasks/editTask', {listId, taskId, newTaskText});
     },
-    deleteTask(id, listId, taskId) {
-        return instance.delete(`tasks/${id}`, {data: {listId, taskId}});
+    deleteTask(listId, taskId) {
+        return instance.delete('tasks', {data: {listId, taskId}});
     },
     isAuth() {
         return instance.get('auth/isAuth');
+    },
+    auth(fields) {
+        return instance.post('auth/auth', {...fields});
     },
     registartionUser(fields) {
         return instance.post('auth/registartion', {...fields});
