@@ -9,8 +9,15 @@ const status = {
 };
 
 module.exports = {
-    connectDB() {
+    connectDBOffline() {
         return mongoose.connect('mongodb://localhost:27017/todolists',
+            {
+                useNewUrlParser: true,
+                useUnifiedTopology: true
+            });
+    },
+    connectDBOnline() {
+        return mongoose.connect('mongodb+srv://ToDoListUser:ToDoListUser@todolistproject-pjhmb.mongodb.net/test?retryWrites=true&w=majority',
             {
                 useNewUrlParser: true,
                 useUnifiedTopology: true

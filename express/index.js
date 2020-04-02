@@ -20,7 +20,20 @@ app.get('*', (req, res) => {
     res.sendFile(path.resolve(__dirname, './../build/index.html'));
 });
 
-mongodb.connectDB()
+// mongodb.connectDBOffline()
+//     .then(res => {
+//         if (res.connection.readyState !== 0) {
+//             app.listen(port, () => console.log(`Server listening port - ${port}`));
+//             return;
+//         }
+//         console.log('Fail to connect to database');
+//     })
+//     .catch(err => {
+//         console.log('err ', err);
+//         console.log('mongoDB was not connect ', err);
+//     });
+
+mongodb.connectDBOnline()
     .then(res => {
         if (res.connection.readyState !== 0) {
             app.listen(port, () => console.log(`Server listening port - ${port}`));
@@ -32,7 +45,6 @@ mongodb.connectDB()
         console.log('err ', err);
         console.log('mongoDB was not connect ', err);
     });
-
 
 
 
