@@ -43,20 +43,21 @@ router.post('/', async (req, res) => {
         console.log('error in router main post /', e);
     }
 });
-router.put('/:id', async (req, res) => {
+router.put('/', async (req, res) => {
     try {
-        if (serverFunction.checkReqId(req)) {
-            res.send("The name of list was't change");
+        if (!serverFunction.isUserAuth(req.cookies)) {
+            res.send({isAuth: false});
             return;
         }
         if (req.body.newListName.trim() === '') {
             res.status(406).send("Can't change to empty list name");
             return;
         }
+        const userId = serverFunction.sessionStorage[req.cookies.todoList];
         const result = await mongodb.changeListName(req.body.listId, req.body.newListName);
         if (result) {
-            const lists = await mongodb.getLists();
-            res.send(lists);
+            const lists = await mongodb.getLists(userId);
+            res.send({isAuth: true, data: lists});
         } else {
             res.status(406).send("The name of list was't change");
         }

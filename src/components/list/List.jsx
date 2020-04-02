@@ -25,6 +25,7 @@ class List extends React.Component {
             taskView: taskView.all,
             editField: '',
             editItemId: null,
+            prevListName: '',
             editListName: '',
             isEditHeader: false,
             isError: false,
@@ -129,7 +130,8 @@ class List extends React.Component {
     };
 
     _onStartEditListHeader = (currentName) => {
-        this.setState({isEditHeader: !this.state.isEditHeader, editListName: currentName});
+        this.setState({isEditHeader: !this.state.isEditHeader,
+            editListName: currentName, prevListName: currentName});
     };
 
     _onEditHeader = (e) => {
@@ -139,8 +141,8 @@ class List extends React.Component {
 
     _onSaveHeader = (e) => {
         if (e === undefined || e.key === 'Enter') {
-            this.props.editListName(this.props.listId, this.state.editListName);
-            this.setState({editListName: '', isEditHeader: !this.state.isEditHeader})
+            this.props.editListName(this.props.listId, this.state.editListName, this.state.prevListName);
+            this.setState({editListName: '', isEditHeader: !this.state.isEditHeader, prevListName:''});
         }
     };
 

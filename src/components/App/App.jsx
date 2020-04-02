@@ -64,13 +64,17 @@ class App extends React.Component {
             .catch(err => this.setState({isError: true, errorText: err.response.data}));
     };
 
-    _onSaveNewListName = (listId, listName) => {
+    _onSaveNewListName = (listId, listName, prevListName) => {
+        if (listName.trim() === prevListName) return;
         if (listName.trim() === '') {
             this.setState({isError: true, errorText: 'The field cannot be empty'});
             return;
         }
-        API.updateListName(APPID, listId, listName)
-            .then(res => this.setState({lists: [...res.data]}))
+        API.updateListName(listId, listName)
+            .then(res => {
+                if (!res.data.isAuth) return this.props.changeAuth({isAuth: res.data.isAuth});
+                this.setState({lists: [...res.data.data]})
+            })
             .catch(err => this.setState({isError: true, errorText: err.response.data}));
     };
 

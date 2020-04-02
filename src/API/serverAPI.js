@@ -15,8 +15,8 @@ export const API = {
     deleteList(listId) {
         return instance.delete('main', {data: {listId}});
     },
-    updateListName(id, listId, newListName) {
-        return instance.put(`main/${id}`, {listId, newListName})
+    updateListName(listId, newListName) {
+        return instance.put('main', {listId, newListName})
     },
     getListTasks(id, listId) {
         return instance.get('tasks', {params: {id, listId}});
