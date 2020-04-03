@@ -36,12 +36,28 @@ class List extends React.Component {
 
     componentDidMount = () => {
         const {listId} = this.props;
+        if(this.props.last) {
+            this.props.switchLoading();
+            API.getListTasks(listId)
+                .then(res => {
+                    this.props.switchLoading();
+                    if (!res.data.isAuth) return this.props.changeAuth({isAuth: res.data.isAuth});
+                    this.setState({tasks: [...res.data.data]});
+                })
+                .catch(err => {
+                    this.props.switchLoading();
+                    this.setState({isError: true, errorText: err.response.data})
+                });
+            return;
+        }
         API.getListTasks(listId)
             .then(res => {
                 if (!res.data.isAuth) return this.props.changeAuth({isAuth: res.data.isAuth});
                 this.setState({tasks: [...res.data.data]});
             })
-            .catch(err => this.setState({isError: true, errorText: err.response.data}));
+            .catch(err => {
+                this.setState({isError: true, errorText: err.response.data})
+            });
     };
 
     _onTypeText = (e) => {
@@ -62,23 +78,33 @@ class List extends React.Component {
             isEdit: false,
             listId,
         };
+        this.props.switchLoading();
         API.addNewTask(task)
             .then(res => {
+                this.props.switchLoading();
                 if (!res.data.isAuth) return this.props.changeAuth({isAuth: res.data.isAuth});
                 this.setState({field: '', tasks: [...res.data.data]})
             })
-            .catch(err => this.setState({isError: true, errorText: err.response.data}));
+            .catch(err => {
+                this.props.switchLoading();
+                this.setState({isError: true, errorText: err.response.data});
+            });
     };
 
     _onChangeTaskStatus = ({e, itemId: taskId, data: currentStatus}) => {
         e.preventDefault();
         const {listId} = this.props;
+        this.props.switchLoading();
         API.changeTaskStatus(listId, taskId, currentStatus)
             .then(res => {
+                this.props.switchLoading();
                 if (!res.data.isAuth) return this.props.changeAuth({isAuth: res.data.isAuth});
                 this.setState({tasks: [...res.data.data]})
             })
-            .catch(err => this.setState({isError: true, errorText: err.response.data}));
+            .catch(err => {
+                this.props.switchLoading();
+                this.setState({isError: true, errorText: err.response.data});
+            });
     };
 
     _onFilterTasks = ({e, itemId}) => {
@@ -120,12 +146,17 @@ class List extends React.Component {
             this.setState({tasks: tasksList, editField: '', prevTextTask: '', editItemId: ''});
             return;
         }
+        this.props.switchLoading();
         API.changeTask(listId, this.state.editItemId, this.state.editField)
             .then(res => {
+                this.props.switchLoading();
                 if (!res.data.isAuth) return this.props.changeAuth({isAuth: res.data.isAuth});
                 this.setState({editField: '', prevTextTask: '', editItemId: null, tasks: [...res.data.data]});
             })
-            .catch(err => this.setState({isError: true, errorText: err.response.data}));
+            .catch(err => {
+                this.props.switchLoading();
+                this.setState({isError: true, errorText: err.response.data});
+            });
     };
 
     _onPressEnter = (e) => {
@@ -147,12 +178,17 @@ class List extends React.Component {
     _onDeleteTask = ({e, itemId: taskId}) => {
         e.preventDefault();
         const {listId} = this.props;
+        this.props.switchLoading();
         API.deleteTask(listId, taskId)
             .then(res => {
+                this.props.switchLoading();
                 if (!res.data.isAuth) return this.props.changeAuth({isAuth: res.data.isAuth});
-                this.setState({tasks: [...res.data.data]})
+                this.setState({tasks: [...res.data.data]});
             })
-            .catch(err => this.setState({isError: true, errorText: err.response.data}));
+            .catch(err => {
+                this.props.switchLoading();
+                this.setState({isError: true, errorText: err.response.data});
+            });
     };
 
     _onStartEditListHeader = (currentName) => {

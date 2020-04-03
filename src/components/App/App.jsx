@@ -119,14 +119,29 @@ class App extends React.Component {
         const isAuth = this.props.isAuth;
         if (!isAuth) return <Redirect to={'/auth'}/>;
 
-        const displayLists = this.state.lists.map(item => <List listName={item.listName}
-                                                                listId={item._id}
-                                                                key={`key-${item._id}`}
-                                                                deleteList={this._onDeleteList}
-                                                                editListName={this._onSaveNewListName}
-                                                                taskView={item.taskView}
-                                                                appId={APPID}
-                                                                changeAuth={this.props.changeAuth}/>);
+        const displayLists = this.state.lists.map((item, index, arr) => {
+            if (index === arr.length - 1) {
+                return <List listName={item.listName}
+                             listId={item._id}
+                             key={`key-${item._id}`}
+                             deleteList={this._onDeleteList}
+                             editListName={this._onSaveNewListName}
+                             taskView={item.taskView}
+                             appId={APPID}
+                             changeAuth={this.props.changeAuth}
+                             switchLoading={this.props.switchLoading}
+                             last={true}/>
+            }
+            return <List listName={item.listName}
+                         listId={item._id}
+                         key={`key-${item._id}`}
+                         deleteList={this._onDeleteList}
+                         editListName={this._onSaveNewListName}
+                         taskView={item.taskView}
+                         appId={APPID}
+                         changeAuth={this.props.changeAuth}
+                         switchLoading={this.props.switchLoading}/>
+        });
         const viewComponent = this.state.isError
             ? <Error errorText={this.state.errorText} errorReset={this._onResetError}/>
             : displayLists;
