@@ -16,11 +16,17 @@ class Main extends React.Component {
 
     componentDidMount() {
         API.isAuth()
-            .then(res => this.setState(res.data))
+            .then(res => {
+                if (this.state.isAuth === res.data.isAuth) return;
+                this.setState({isAuth: res.data.isAuth});
+            })
             .catch(err => console.log('Auth DidMount err', err))
     }
 
-    _changeAuth = (isAuth) => this.setState({isAuth});
+    _changeAuth = (isAuth) => {
+        if (this.state.isAuth === isAuth.isAuth) return;
+        this.setState({isAuth: isAuth.isAuth})
+    };
 
     render() {
         const isAuth = this.state.isAuth;

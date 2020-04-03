@@ -186,7 +186,8 @@ class List extends React.Component {
                      action={this._onEditHeader}
                      keyAction={this._onSaveHeader}
                      blur={this._onSaveHeader}/>
-            : <h2 onDoubleClick={() => this._onStartEditListHeader(listName)}>{listName}</h2>;
+            : <h2 onDoubleClick={() => this._onStartEditListHeader(listName)}
+                  title="Make double click to change">{listName}</h2>;
 
 
         const tasksList = filterArray(this.state.tasks, this.state.taskView);
@@ -195,7 +196,8 @@ class List extends React.Component {
                 <div className={style.taskContainer} key={`${item.taskText}-${index}`}>
                     <div className={`${style.taskNumber} ${style.taskItem}`}>{index + 1}.</div>
                     <div className={`${style.taskText} ${style.taskItem}`}
-                         onDoubleClick={(e) => this._onEditTask({e, taskId: item._id})}>
+                         onDoubleClick={(e) => this._onEditTask({e, taskId: item._id})}
+                         title="Make double click to change">
                         {item.isEdit
                             ? <Input imputValue={this.state.editField}
                                      focus={true}

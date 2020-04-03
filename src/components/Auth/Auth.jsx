@@ -45,7 +45,7 @@ class Auth extends React.Component {
     };
 
     render() {
-        const isAuth = this.props.isAuth.isAuth;
+        const isAuth = this.props.isAuth;
         if (isAuth) return <Redirect to={'/app'}/>;
         return (
             <div className={style.auth_container}>

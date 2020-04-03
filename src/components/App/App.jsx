@@ -81,9 +81,17 @@ class App extends React.Component {
     _onResetError = () => {
         this.setState({isError: false, errorText: ''});
     };
+    _onLogOut = () => {
+        API.logOut()
+            .then(res => {
+                if (!res.data.isAuth) return this.props.changeAuth({isAuth: res.data.isAuth});
+                alert('Something went wrong, try again later');
+            })
+            .catch(err => this.setState({isError: true, errorText: err.response.data}));
+    };
 
     render() {
-        const isAuth = this.props.isAuth.isAuth;
+        const isAuth = this.props.isAuth;
         if (!isAuth) return <Redirect to={'/auth'}/>;
 
         const displayLists = this.state.lists.map(item => <List listName={item.listName}
@@ -101,7 +109,10 @@ class App extends React.Component {
         return (
             <div className={'app_container'}>
                 <div>
-                    <h1>Enter the name of new list, please!</h1>
+                    <div className="header">
+                        <h1 className={'app_h1'}>Enter the name of new list, please!</h1>
+                        <Button value={'Log out'} action={this._onLogOut} styleClass={'logOutButton'}/>
+                    </div>
                     <Input imputValue={this.state.listName}
                            action={this._onType}
                            keyAction={this._onPressEnter}

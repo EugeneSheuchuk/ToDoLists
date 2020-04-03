@@ -1,8 +1,7 @@
 import * as axios from 'axios';
 
 const instance = axios.create({
-    baseURL: 'http://localhost:8080/',
-    //baseURL: 'https://arcane-stream-95803.herokuapp.com',
+    baseURL: 'http://localhost:8000/',
     withCredentials: true,
 });
 
@@ -42,5 +41,8 @@ export const API = {
     },
     registartionUser(fields) {
         return instance.post('auth/registartion', {...fields});
-    }
+    },
+    logOut() {
+        return instance.put('auth/logout');
+    },
 };

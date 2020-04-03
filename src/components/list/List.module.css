@@ -51,6 +51,7 @@
 .taskText {
     word-wrap: break-word;
     overflow: auto;
+    cursor: pointer;
 }
 
 .tasksFilter {
@@ -59,6 +60,10 @@
 
 .deleteList {
     text-align: right;
+}
+
+h2 {
+    cursor: pointer;
 }
 
 
