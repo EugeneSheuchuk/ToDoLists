@@ -5,12 +5,14 @@ import Auth from "../Auth/Auth";
 import Registration from "../Registration/Registration";
 import App from "../App/App";
 import {API} from "../../API/serverAPI";
+import Loading from "../Loading/Loading";
 
 class Main extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             isAuth: false,
+            isLoading: true,
         };
     }
 
@@ -30,7 +32,7 @@ class Main extends React.Component {
 
     render() {
         const isAuth = this.state.isAuth;
-
+        const loadingView = this.state.isLoading ? <Loading/> : null;
         return (
             <div className={style.main_container}>
                 <h1>The todo list - application which help to save your time</h1>
@@ -48,6 +50,7 @@ class Main extends React.Component {
                         <App isAuth={isAuth} changeAuth={this._changeAuth}/>
                     </Route>
                 </Switch>
+                {loadingView}
             </div>
         );
     }
