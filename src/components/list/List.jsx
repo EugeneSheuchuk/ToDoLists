@@ -36,26 +36,17 @@ class List extends React.Component {
 
     componentDidMount = () => {
         const {listId} = this.props;
-        if(this.props.last) {
-            this.props.switchLoading();
-            API.getListTasks(listId)
-                .then(res => {
-                    this.props.switchLoading();
-                    if (!res.data.isAuth) return this.props.changeAuth({isAuth: res.data.isAuth});
-                    this.setState({tasks: [...res.data.data]});
-                })
-                .catch(err => {
-                    this.props.switchLoading();
-                    this.setState({isError: true, errorText: err.response.data})
-                });
-            return;
-        }
+        setTimeout(() => {
+            this.props.increaseLoadingTasksCount(1);
+        }, this.props.index * 30);
         API.getListTasks(listId)
             .then(res => {
+                this.props.increaseLoadingTasksCount(-1);
                 if (!res.data.isAuth) return this.props.changeAuth({isAuth: res.data.isAuth});
                 this.setState({tasks: [...res.data.data]});
             })
             .catch(err => {
+                this.props.increaseLoadingTasksCount(-1);
                 this.setState({isError: true, errorText: err.response.data})
             });
     };

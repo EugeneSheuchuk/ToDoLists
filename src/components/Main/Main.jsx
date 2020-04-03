@@ -13,6 +13,7 @@ class Main extends React.Component {
         this.state = {
             isAuth: false,
             isLoading: false,
+            loadingTasksCount: 0
         };
     }
 
@@ -42,9 +43,17 @@ class Main extends React.Component {
         this.setState({isLoading: !this.state.isLoading})
     };
 
+    _onIncreaseLoadingTasksCount = (count) => {
+        const newCount = this.state.loadingTasksCount + count;
+        console.log('main newCount', newCount);
+        this.setState({loadingTasksCount: newCount});
+    };
+
     render() {
         const isAuth = this.state.isAuth;
-        const loadingView = this.state.isLoading  ? <Loading/> : null;
+        console.log('main ', this.state);
+        const loadingView = this.state.isLoading || this.state.loadingTasksCount !== 0
+            ? <Loading/> : null;
 
         return (
             <div className={style.main_container}>
@@ -64,7 +73,8 @@ class Main extends React.Component {
                     </Route>
                     <Route path={'/app'}>
                         <App isAuth={isAuth} changeAuth={this._changeAuth}
-                             switchLoading={this._onSwitchLoadingData}/>
+                             switchLoading={this._onSwitchLoadingData}
+                             increaseLoadingTasksCount={this._onIncreaseLoadingTasksCount}/>
                     </Route>
                 </Switch>
                 {loadingView}
