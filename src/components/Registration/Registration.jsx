@@ -52,13 +52,19 @@ class Registration extends React.Component {
             this.setState({...error});
             return;
         }
-
+        this.props.switchLoading();
         API.registartionUser(checkState)
-            .then(res => this.props.changeAuth(res.data))
-            .catch(err => this.setState({
-                errorName: '', errorSurname: '', errorEmail: '', errorPass: '',
-                ...err.response.data
-            }));
+            .then(res => {
+                this.props.switchLoading();
+                this.props.changeAuth(res.data);
+            })
+            .catch(err => {
+                this.props.switchLoading();
+                this.setState({
+                    errorName: '', errorSurname: '', errorEmail: '', errorPass: '',
+                    ...err.response.data
+                })
+            });
 
     };
 

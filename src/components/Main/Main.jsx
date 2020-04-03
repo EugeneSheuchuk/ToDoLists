@@ -12,22 +12,34 @@ class Main extends React.Component {
         super(props);
         this.state = {
             isAuth: false,
-            isLoading: true,
+            isLoading: false,
         };
     }
 
     componentDidMount() {
+        this._onSwitchLoadingData();
         API.isAuth()
             .then(res => {
-                if (this.state.isAuth === res.data.isAuth) return;
+                if (this.state.isAuth === res.data.isAuth) {
+                    this._onSwitchLoadingData();
+                    return;
+                }
+                this._onSwitchLoadingData();
                 this.setState({isAuth: res.data.isAuth});
             })
-            .catch(err => console.log('Auth DidMount err', err))
+            .catch(err => {
+                console.log('Auth DidMount err', err);
+                this.setState({isLoading: false});
+            })
     }
 
     _changeAuth = (isAuth) => {
         if (this.state.isAuth === isAuth.isAuth) return;
         this.setState({isAuth: isAuth.isAuth})
+    };
+
+    _onSwitchLoadingData = () => {
+      this.setState({isLoading: !this.state.isLoading})
     };
 
     render() {
@@ -38,16 +50,20 @@ class Main extends React.Component {
                 <h1>The todo list - application which help to save your time</h1>
                 <Switch>
                     <Route exact path={'/'}>
-                        <Auth isAuth={isAuth} changeAuth={this._changeAuth}/>
+                        <Auth isAuth={isAuth} changeAuth={this._changeAuth}
+                              switchLoading={this._onSwitchLoadingData}/>
                     </Route>
                     <Route path={'/auth'}>
-                        <Auth isAuth={isAuth} changeAuth={this._changeAuth}/>
+                        <Auth isAuth={isAuth} changeAuth={this._changeAuth}
+                              switchLoading={this._onSwitchLoadingData}/>
                     </Route>
                     <Route path={'/registration'}>
-                        <Registration isAuth={isAuth} changeAuth={this._changeAuth}/>
+                        <Registration isAuth={isAuth} changeAuth={this._changeAuth}
+                                      switchLoading={this._onSwitchLoadingData}/>
                     </Route>
                     <Route path={'/app'}>
-                        <App isAuth={isAuth} changeAuth={this._changeAuth}/>
+                        <App isAuth={isAuth} changeAuth={this._changeAuth}
+                             switchLoading={this._onSwitchLoadingData}/>
                     </Route>
                 </Switch>
                 {loadingView}

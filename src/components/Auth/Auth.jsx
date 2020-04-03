@@ -39,9 +39,16 @@ class Auth extends React.Component {
             this.setState({...error});
             return;
         }
+        this.props.switchLoading();
         API.auth(checkState)
-            .then(res => this.props.changeAuth(res.data))
-            .catch(err => this.setState({errorEmail: '', errorPass: '', ...err.response.data}));
+            .then(res => {
+                this.props.switchLoading();
+                this.props.changeAuth(res.data)
+            })
+            .catch(err => {
+                this.props.switchLoading();
+                this.setState({errorEmail: '', errorPass: '', ...err.response.data});
+            });
     };
 
     render() {

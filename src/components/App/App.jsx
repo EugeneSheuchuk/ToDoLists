@@ -23,12 +23,17 @@ class App extends React.Component {
     componentDidMount = () => {
         const isAuth = this.props.isAuth;
         if (!isAuth) return;
+        this.props.switchLoading();
         API.getUserLists()
             .then(res => {
+                this.props.switchLoading();
                 if (!res.data.isAuth) return this.props.changeAuth({isAuth: res.data.isAuth});
                 this.setState({lists: [...res.data.data]});
             })
-            .catch(err => this.setState({isError: true, errorText: err.response.data}));
+            .catch(err => {
+                this.props.switchLoading();
+                this.setState({isError: true, errorText: err.response.data});
+            });
     };
 
     _onType = e => {
@@ -41,12 +46,17 @@ class App extends React.Component {
             this.setState({isError: true, errorText: 'The field cannot be empty'});
             return;
         }
+        this.props.switchLoading();
         API.addList(this.state.listName)
             .then(res => {
+                this.props.switchLoading();
                 if (!res.data.isAuth) return this.props.changeAuth({isAuth: res.data.isAuth});
                 this.setState({lists: [...res.data.data], listName: ''})
             })
-            .catch(err => this.setState({isError: true, errorText: err.response.data}));
+            .catch(err => {
+                this.props.switchLoading();
+                this.setState({isError: true, errorText: err.response.data})
+            });
     };
 
     _onPressEnter = e => {
@@ -56,12 +66,17 @@ class App extends React.Component {
     };
 
     _onDeleteList = ({itemId: listId}) => {
+        this.props.switchLoading();
         API.deleteList(listId)
             .then(res => {
+                this.props.switchLoading();
                 if (!res.data.isAuth) return this.props.changeAuth({isAuth: res.data.isAuth});
                 this.setState({lists: [...res.data.data]});
             })
-            .catch(err => this.setState({isError: true, errorText: err.response.data}));
+            .catch(err => {
+                this.props.switchLoading();
+                this.setState({isError: true, errorText: err.response.data})
+            });
     };
 
     _onSaveNewListName = (listId, listName, prevListName) => {
@@ -70,24 +85,34 @@ class App extends React.Component {
             this.setState({isError: true, errorText: 'The field cannot be empty'});
             return;
         }
+        this.props.switchLoading();
         API.updateListName(listId, listName)
             .then(res => {
+                this.props.switchLoading();
                 if (!res.data.isAuth) return this.props.changeAuth({isAuth: res.data.isAuth});
                 this.setState({lists: [...res.data.data]})
             })
-            .catch(err => this.setState({isError: true, errorText: err.response.data}));
+            .catch(err => {
+                this.props.switchLoading();
+                this.setState({isError: true, errorText: err.response.data})
+            });
     };
 
     _onResetError = () => {
         this.setState({isError: false, errorText: ''});
     };
     _onLogOut = () => {
+        this.props.switchLoading();
         API.logOut()
             .then(res => {
+                this.props.switchLoading();
                 if (!res.data.isAuth) return this.props.changeAuth({isAuth: res.data.isAuth});
                 alert('Something went wrong, try again later');
             })
-            .catch(err => this.setState({isError: true, errorText: err.response.data}));
+            .catch(err => {
+                this.props.switchLoading();
+                this.setState({isError: true, errorText: err.response.data})
+            });
     };
 
     render() {
