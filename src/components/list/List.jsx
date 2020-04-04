@@ -21,7 +21,7 @@ class List extends React.Component {
         super(props);
         this.state = {
             field: '',
-            tasks: [],
+            tasks: [...props.tasks],
             taskView: taskView.all,
             prevTextTask: '',
             editField: '',
@@ -32,23 +32,6 @@ class List extends React.Component {
             isError: false,
             errorText: ''
         };
-    };
-
-    componentDidMount = () => {
-        const {listId} = this.props;
-        setTimeout(() => {
-            this.props.increaseLoadingTasksCount(1);
-        }, this.props.index * 30);
-        API.getListTasks(listId)
-            .then(res => {
-                this.props.increaseLoadingTasksCount(-1);
-                if (!res.data.isAuth) return this.props.changeAuth({isAuth: res.data.isAuth});
-                this.setState({tasks: [...res.data.data]});
-            })
-            .catch(err => {
-                this.props.increaseLoadingTasksCount(-1);
-                this.setState({isError: true, errorText: err.response.data})
-            });
     };
 
     _onTypeText = (e) => {

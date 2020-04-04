@@ -7,8 +7,6 @@ import Button from "./../Button/Button";
 import {API} from "./../../API/serverAPI";
 import Error from "./../Error/Error";
 
-const APPID = 'toDoLists';
-
 class App extends React.Component {
     constructor(props) {
         super(props);
@@ -24,7 +22,7 @@ class App extends React.Component {
         const isAuth = this.props.isAuth;
         if (!isAuth) return;
         this.props.switchLoading();
-        API.getUserLists()
+        API.getUserData()
             .then(res => {
                 this.props.switchLoading();
                 if (!res.data.isAuth) return this.props.changeAuth({isAuth: res.data.isAuth});
@@ -51,6 +49,7 @@ class App extends React.Component {
             .then(res => {
                 this.props.switchLoading();
                 if (!res.data.isAuth) return this.props.changeAuth({isAuth: res.data.isAuth});
+                console.log('app addList res.data ', res.data);
                 this.setState({lists: [...res.data.data], listName: ''})
             })
             .catch(err => {
@@ -121,16 +120,14 @@ class App extends React.Component {
 
         const displayLists = this.state.lists.map((item, index) =>
             <List listName={item.listName}
-                  index={index}
-                  listId={item._id}
-                  key={`key-${item._id}`}
+                  listId={item.listId}
+                  tasks={item.tasks}
+                  key={`key-${item.listId}`}
                   deleteList={this._onDeleteList}
                   editListName={this._onSaveNewListName}
                   taskView={item.taskView}
-                  appId={APPID}
                   changeAuth={this.props.changeAuth}
-                  switchLoading={this.props.switchLoading}
-                  increaseLoadingTasksCount={this.props.increaseLoadingTasksCount}/>
+                  switchLoading={this.props.switchLoading}/>
         );
         const viewComponent = this.state.isError
             ? <Error errorText={this.state.errorText} errorReset={this._onResetError}/>

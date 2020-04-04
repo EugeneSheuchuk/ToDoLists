@@ -41,7 +41,8 @@ module.exports = {
         }
     },
     getLists(userId) {
-        return List.find({userId});
+        const query = List.find({userId});
+        return query.select('-userId')
     },
     async addList(listName, userId) {
         try {
