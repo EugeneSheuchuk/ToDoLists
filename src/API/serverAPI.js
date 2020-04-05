@@ -6,7 +6,7 @@ const instance = axios.create({
 });
 
 export const API = {
-    getUserLists() {
+    getUserData() {
         return instance.get('main');
     },
     addList(listName) {
